@@ -1,0 +1,266 @@
+<resources>
+    <string name="app_name">WakeLux</string>
+
+    <!-- tabs -->
+    <string name="tab_overview">Сейчас</string>
+    <string name="tab_settings">Настройки</string>
+    <string name="tab_curve">Кривая</string>
+    <string name="tab_diag">История</string>
+
+    <!-- service control -->
+    <string name="service_start">Запустить</string>
+    <string name="service_stop">Остановить</string>
+    <string name="service_running">Работает</string>
+    <string name="service_stopped">Остановлен</string>
+    <string name="service_state_hint_running">Камера следит за комнатой. Экран притухает вместе со светом и включается, когда вы подходите.</string>
+    <string name="service_state_hint_stopped">Ничего не работает: яркость и пробуждение экрана не управляются.</string>
+    <string name="notif_channel_name">Сервис WakeLux</string>
+    <string name="notif_channel_desc">Постоянное уведомление работающего сервиса</string>
+    <string name="notif_title">WakeLux работает</string>
+    <string name="notif_idle">Запуск камеры…</string>
+    <string name="notif_action_stop">Стоп</string>
+    <string name="notif_action_wake">Разбудить</string>
+    <string name="notif_room">в комнате %1$d</string>
+    <string name="notif_screen">экран %1$d</string>
+    <string name="notif_change">изменения %1$s%%</string>
+    <string name="notif_motion">движение</string>
+    <string name="notif_still">тихо</string>
+    <string name="notif_camera">камера: %1$s</string>
+    <string name="notif_quiet">тихие часы</string>
+
+    <!-- permissions -->
+    <string name="perm_title">Нужны разрешения</string>
+    <string name="perm_camera">Камера</string>
+    <string name="perm_camera_why">Камера заменяет датчик освещённости, которого у этого планшета нет. Считаются только средняя яркость картинки и величина изменений между кадрами. Ничего не записывается, не сохраняется и никуда не отправляется.</string>
+    <string name="perm_write_settings">Изменение системных настроек</string>
+    <string name="perm_write_settings_why">Нужно, чтобы задавать яркость экрана и время до его выключения. Android выдаёт это на отдельном экране настроек, а не обычным диалогом.</string>
+    <string name="perm_notifications">Уведомления</string>
+    <string name="perm_notifications_why">Android держит фоновый сервис живым только пока тот показывает уведомление.</string>
+    <string name="perm_granted">выдано</string>
+    <string name="perm_missing">не выдано</string>
+    <string name="perm_grant">Выдать</string>
+    <string name="perm_grant_root">Выдать всё через root</string>
+
+    <!-- overview -->
+    <string name="ov_section_live">Что приложение видит прямо сейчас</string>
+    <string name="ov_room_light">Свет в комнате</string>
+    <string name="ov_room_light_hint">Насколько светлая картинка с камеры, 0–255. Именно это значение задаёт яркость экрана.</string>
+    <string name="ov_brightness">Яркость экрана</string>
+    <string name="ov_brightness_target">цель %1$d</string>
+    <string name="ov_change">Изменения в картинке</string>
+    <string name="ov_change_hint">Доля картинки, изменившаяся за последнюю секунду. Порог присутствия %1$s%%, порог пробуждения %2$s%%.</string>
+    <string name="ov_movement">Движение</string>
+    <string name="ov_movement_none">нет</string>
+    <string name="ov_movement_far">движение в кадре</string>
+    <string name="ov_movement_near">кто-то рядом</string>
+    <string name="ov_movement_light">поменялся свет в комнате (проигнорировано)</string>
+    <string name="ov_movement_dark">слишком темно, чтобы различить</string>
+    <string name="ov_movement_waiting">ждём первые кадры</string>
+    <string name="ov_screen">Экран</string>
+    <string name="ov_screen_on">включён</string>
+    <string name="ov_screen_off">выключен</string>
+    <string name="ov_proximity">Датчик приближения</string>
+    <string name="ov_proximity_near">что-то рядом</string>
+    <string name="ov_proximity_far">свободно</string>
+    <string name="ov_proximity_absent">на этом устройстве отсутствует</string>
+    <string name="ov_proximity_off">есть, но выключен в настройках</string>
+
+    <string name="ov_section_counters">Статистика</string>
+    <string name="ov_camera">Камера</string>
+    <string name="ov_frames">Обработано кадров</string>
+    <string name="ov_restarts">Перезапусков камеры</string>
+    <string name="ov_wakes">Пробуждений экрана</string>
+    <string name="ov_last_wake">Последнее пробуждение</string>
+    <string name="ov_light_change">Смен освещения проигнорировано</string>
+    <string name="ov_uptime">Работает уже</string>
+    <string name="ov_quiet_active">Сейчас тихие часы</string>
+    <string name="ov_never">не было</string>
+    <string name="ov_ha_status">Home Assistant</string>
+    <string name="ov_preview">Вид с камеры (отладка)</string>
+    <string name="ov_preview_hint">Картинка с камеры в оттенках серого; пиксели, изменившиеся с прошлого кадра, покрашены красным. Строится только в памяти и никогда не сохраняется.</string>
+    <string name="ov_wake_now">Разбудить экран</string>
+    <string name="ov_brightness_failed">Не удалось задать яркость: выдайте разрешение «Изменение системных настроек» или включите запись через root.</string>
+
+    <!-- camera states -->
+    <string name="cam_idle">не запущена</string>
+    <string name="cam_opening">открывается</string>
+    <string name="cam_running">работает</string>
+    <string name="cam_error">ошибка</string>
+    <string name="cam_restarting">перезапускается</string>
+
+    <!-- settings: sections -->
+    <string name="sec_features">Главные переключатели</string>
+    <string name="sec_brightness">Яркость</string>
+    <string name="sec_motion">Когда реагировать на движение</string>
+    <string name="sec_wake">Пробуждение экрана</string>
+    <string name="sec_screen">Выключение экрана</string>
+    <string name="sec_quiet">Тихие часы</string>
+    <string name="sec_camera">Камера</string>
+    <string name="sec_root">Возможности с root</string>
+    <string name="sec_ha">Home Assistant</string>
+    <string name="sec_service">Сервис и диагностика</string>
+
+    <!-- settings: items -->
+    <string name="set_autobrightness">Подстраивать яркость автоматически</string>
+    <string name="set_autobrightness_hint">Использует картинку с камеры вместо отсутствующего датчика освещённости.</string>
+    <string name="set_motion">Включать экран при движении</string>
+    <string name="set_motion_hint">Без этого экран живёт только по системному таймауту.</string>
+
+    <string name="set_luma_min">Уровень «тёмная комната»</string>
+    <string name="set_luma_min_hint">При таком показании камеры и ниже экран уходит на минимальную яркость. Закройте камеру рукой и посмотрите значение на вкладке «Сейчас».</string>
+    <string name="set_luma_max">Уровень «светлая комната»</string>
+    <string name="set_luma_max_hint">При таком показании камеры и выше экран выходит на максимальную яркость.</string>
+    <string name="set_brightness_min">Минимальная яркость экрана</string>
+    <string name="set_brightness_min_hint">0–255. Ниже 10 этот планшет всё равно не опустится.</string>
+    <string name="set_brightness_max">Максимальная яркость экрана</string>
+    <string name="set_alpha">Скорость подстройки</string>
+    <string name="set_alpha_hint">Меньше — плавнее и медленнее. При 0.15 новый уровень набирается примерно за десять секунд.</string>
+    <string name="set_hysteresis">Не реагировать на мелкие изменения</string>
+    <string name="set_hysteresis_hint">Яркость меняется только если новое значение отличается хотя бы на столько. Это убирает заметное мерцание.</string>
+
+    <string name="set_pixel_threshold">Чувствительность к пикселю</string>
+    <string name="set_pixel_threshold_hint">Насколько сильно должен измениться отдельный пиксель, чтобы его посчитали. Маленькие значения начинают ловить шум камеры.</string>
+    <string name="set_motion_ratio">Считать присутствием изменения от</string>
+    <string name="set_motion_ratio_hint">Доля изменившейся картинки. Это удерживает уже включённый экран и питает датчик движения в Home Assistant.</string>
+    <string name="set_confirm_frames">Кадров подряд для подтверждения</string>
+    <string name="set_confirm_frames_hint">Отсеивает единичные шумные кадры.</string>
+    <string name="set_light_change_ratio">Игнорировать изменения всей картинки выше</string>
+    <string name="set_light_change_ratio_hint">Когда включают свет в комнате, меняется почти вся картинка. Всё, что выше этой доли, считается сменой освещения, а не движением.</string>
+    <string name="set_dark_cutoff">Не искать движение, если темнее чем</string>
+    <string name="set_dark_cutoff_hint">В полной темноте камера выдаёт только шум.</string>
+
+    <string name="set_wake_ratio">Будить экран только при изменениях выше</string>
+    <string name="set_wake_ratio_hint">Человек рядом с планшетом занимает в кадре гораздо больше места, чем тот, кто шевелится на диване в другом конце комнаты. Поднимите значение, чтобы экран включался только когда проходят рядом; опустите — чтобы будился от любого движения.</string>
+    <string name="set_wake_confirm">Кадров подряд для пробуждения</string>
+    <string name="set_wake_zone">Реагировать только на середину картинки</string>
+    <string name="set_wake_zone_hint">Будить экран только если движение происходит прямо перед планшетом, игнорируя края кадра.</string>
+    <string name="set_wake_zone_size">Размер центральной области</string>
+    <string name="set_wake_zone_size_hint">Процент от ширины и высоты. 50 %% — это центральная четверть площади кадра.</string>
+    <string name="set_proximity">Ещё будить по датчику приближения</string>
+    <string name="set_proximity_hint">Мгновенное включение, когда рядом оказывается рука. У большинства планшетов такого датчика нет — на вкладке «Сейчас» видно, есть ли он здесь.</string>
+    <string name="set_keep_awake">Не давать экрану погаснуть, пока движение продолжается</string>
+    <string name="set_keep_awake_hint">Работает по порогу присутствия, поэтому уже включённый экран удерживают и мелкие движения.</string>
+    <string name="set_wakelock_ms">Держать экран после пробуждения</string>
+    <string name="set_wakelock_ms_hint">Сколько каждое пробуждение удерживает экран, прежде чем в дело вступит системный таймаут.</string>
+
+    <string name="set_manage_timeout">Управлять системным временем до выключения экрана</string>
+    <string name="set_screen_timeout">Выключать экран через</string>
+    <string name="set_screen_timeout_hint">Без root погасить экран напрямую нельзя, поэтому именно этот системный таймаут и выключает его, когда ничего не происходит.</string>
+
+    <string name="set_quiet_enabled">Включить тихие часы</string>
+    <string name="set_quiet_start">С</string>
+    <string name="set_quiet_end">До</string>
+    <string name="set_quiet_max">Ограничение яркости в тихие часы</string>
+    <string name="set_quiet_no_wake">Не будить экран в тихие часы</string>
+
+    <string name="set_facing">Какую камеру использовать</string>
+    <string name="set_facing_front">Фронтальную</string>
+    <string name="set_facing_back">Тыловую</string>
+    <string name="set_frame_interval">Смотреть на картинку каждые</string>
+    <string name="set_frame_interval_hint">Одного кадра в секунду достаточно, и он почти не грузит процессор.</string>
+    <string name="set_watchdog">Перезапускать камеру, если кадров нет</string>
+    <string name="set_ae_lock">Заблокировать экспозицию камеры</string>
+    <string name="set_ae_lock_hint">Камера обычно сама выравнивает картинку, из-за чего разница между тёмной и светлой комнатой сжимается. Блокировка делает показание честнее, но настраивается по той сцене, которая была при запуске сервиса.</string>
+    <string name="set_exposure_comp">Коррекция экспозиции</string>
+
+    <string name="set_root_enabled">Использовать root</string>
+    <string name="set_root_fallback">Писать системные настройки через root, если нет разрешения</string>
+    <string name="set_root_force_off">Гасить экран самому, когда ничего не происходит</string>
+    <string name="set_root_force_off_hint">Вместо ожидания системного таймаута. Полезно, если другое приложение удерживает экран.</string>
+    <string name="set_root_force_off_delay">Гасить через</string>
+    <string name="set_root_auto_grant">Выдавать себе разрешения при запуске</string>
+    <string name="set_root_unavailable">На устройстве нет root или он не выдан WakeLux.</string>
+
+    <string name="set_ha_enabled">Отправлять значения в Home Assistant</string>
+    <string name="set_ha_url">Адрес Home Assistant</string>
+    <string name="set_ha_token">Долгоживущий токен доступа</string>
+    <string name="set_ha_prefix">Префикс имён сущностей</string>
+    <string name="set_ha_interval">Отправлять каждые</string>
+    <string name="set_ha_test">Отправить тестовое значение</string>
+    <string name="set_ha_privacy">Отправляются только числа: свет в комнате, яркость экрана, движение, состояние экрана. Сама картинка никогда не покидает планшет.</string>
+    <string name="set_ha_entities">Создаёт sensor.%1$s_luma, sensor.%1$s_brightness, binary_sensor.%1$s_motion, binary_sensor.%1$s_screen, sensor.%1$s_status.</string>
+
+    <string name="set_boot">Запускаться автоматически после перезагрузки</string>
+    <string name="set_cmd_token">Пароль для команд извне</string>
+    <string name="set_cmd_token_hint">Оставьте пустым, чтобы команды через adb работали без пароля.</string>
+    <string name="set_diag_file">Писать CSV-лог в папку приложения</string>
+    <string name="set_diag_history">Хранить историю</string>
+    <string name="set_reset">Сбросить всё к значениям по умолчанию</string>
+    <string name="set_export">Скопировать настройки</string>
+    <string name="set_import">Вставить настройки</string>
+    <string name="set_import_result">Применено: %1$d</string>
+
+    <!-- units -->
+    <string name="unit_seconds"> с</string>
+    <string name="unit_minutes"> мин</string>
+    <string name="unit_ms"> мс</string>
+    <string name="unit_percent"> %%</string>
+    <string name="unit_of_255">%1$d из 255</string>
+
+    <!-- curve -->
+    <string name="curve_enabled">Использовать свою кривую</string>
+    <string name="curve_hint">Тяните точку, чтобы её передвинуть, коснитесь пустого места, чтобы добавить, долгое нажатие — удалить. Слева направо — свет в комнате, снизу вверх — яркость экрана. Красный перекрёсток — где вы находитесь прямо сейчас.</string>
+    <string name="curve_add">Добавить точку</string>
+    <string name="curve_reset">Сбросить кривую</string>
+    <string name="curve_current">Прямо сейчас: свет в комнате %1$d, экран %2$d</string>
+    <string name="curve_simple_hint">Используется прямая между уровнями «тёмная комната» и «светлая комната». Включите переключатель, чтобы задать форму вручную.</string>
+    <string name="curve_point">свет %1$d</string>
+    <string name="curve_point_value">экран %1$d</string>
+
+    <!-- diagnostics -->
+    <string name="diag_window_5m">5 мин</string>
+    <string name="diag_window_30m">30 мин</string>
+    <string name="diag_window_3h">3 ч</string>
+    <string name="diag_window_all">Всё</string>
+    <string name="diag_legend">Жёлтый — свет в комнате, синий — яркость экрана, красные метки — движение.</string>
+    <string name="diag_events">Журнал событий</string>
+    <string name="diag_clear">Очистить</string>
+    <string name="diag_share">Скопировать журнал</string>
+    <string name="diag_copied">Скопировано в буфер обмена</string>
+    <string name="diag_no_data">Данных пока нет — запустите сервис.</string>
+    <string name="diag_stats">мин %1$d / в среднем %2$d / макс %3$d</string>
+    <string name="diag_file_path">Файл CSV: %1$s</string>
+    <string name="diag_room_light">Свет в комнате</string>
+    <string name="diag_motion_count">Секунд с движением</string>
+
+    <!-- event log messages -->
+    <string name="ev_service_started">сервис запущен</string>
+    <string name="ev_service_stopped">сервис остановлен</string>
+    <string name="ev_service_killed">сервис уничтожен системой</string>
+    <string name="ev_camera_opened">камера открыта: id=%1$d, картинка %2$dx%3$d</string>
+    <string name="ev_camera_supports">камера поддерживает: размеры=%1$s, диапазоны fps=%2$s</string>
+    <string name="ev_camera_params">камера настроена: %1$dx%2$d, fps=%3$s, формат=%4$d, фокус=%5$s, коррекция экспозиции=%6$d, блокировка экспозиции доступна=%7$b</string>
+    <string name="ev_camera_hal_error">ошибка камеры от HAL: %1$d</string>
+    <string name="ev_camera_restart">перезапуск камеры: %1$s</string>
+    <string name="ev_camera_retry">повторная попытка открыть камеру через %1$d с</string>
+    <string name="ev_camera_recreate">пересоздание контроллера камеры: %1$s</string>
+    <string name="ev_camera_stuck">состояние %1$s не меняется %2$d с</string>
+    <string name="ev_camera_watchdog">watchdog: кадров нет %1$d с</string>
+    <string name="ev_camera_settings_changed">изменены настройки камеры</string>
+    <string name="ev_camera_external">команда извне</string>
+    <string name="ev_camera_not_found">камера не найдена</string>
+    <string name="ev_light_change">смена освещения проигнорирована (%1$d %% картинки)</string>
+    <string name="ev_wake_motion">кто-то рядом: экран разбужен</string>
+    <string name="ev_wake_quiet">кто-то рядом: пробуждение подавлено тихими часами</string>
+    <string name="ev_wake_proximity">датчик приближения: экран разбужен</string>
+    <string name="ev_wake_external">экран разбужен командой извне</string>
+    <string name="ev_wake_external_denied">пробуждение извне отклонено (тихие часы)</string>
+    <string name="ev_screen_on">экран включён</string>
+    <string name="ev_screen_off">экран выключен</string>
+    <string name="ev_screen_off_root">экран погашен через root после бездействия</string>
+    <string name="ev_screen_off_cmd">гашение экрана командой извне: %1$s</string>
+    <string name="ev_screen_off_done">выполнено</string>
+    <string name="ev_screen_off_already">экран уже был выключен</string>
+    <string name="ev_screen_off_no_root">root недоступен</string>
+    <string name="ev_screen_off_disabled">выключено в настройках</string>
+    <string name="ev_screen_off_failed">команда su не сработала</string>
+    <string name="ev_cmd_set">команда извне: %1$s = %2$s</string>
+    <string name="ev_cmd_rejected">команда извне отклонена: %1$s = %2$s</string>
+    <string name="ev_ha_test">тестовое значение отправлено в Home Assistant</string>
+    <string name="ev_ha_error">Home Assistant: %1$s</string>
+    <string name="ev_no_write_settings">нет разрешения на изменение системных настроек — яркость применяться не будет</string>
+    <string name="ev_timeout_failed">не удалось задать время до выключения экрана (нет разрешения?)</string>
+    <string name="ev_root_granted">разрешения выданы через root</string>
+    <string name="ev_boot">автозапуск после %1$s</string>
+    <string name="ev_proximity_missing">запрошен датчик приближения, но на этом устройстве его нет</string>
+</resources>

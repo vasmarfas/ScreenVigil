@@ -1,0 +1,266 @@
+<resources>
+    <string name="app_name">WakeLux</string>
+
+    <!-- tabs -->
+    <string name="tab_overview">Now</string>
+    <string name="tab_settings">Settings</string>
+    <string name="tab_curve">Curve</string>
+    <string name="tab_diag">History</string>
+
+    <!-- service control -->
+    <string name="service_start">Start</string>
+    <string name="service_stop">Stop</string>
+    <string name="service_running">Running</string>
+    <string name="service_stopped">Stopped</string>
+    <string name="service_state_hint_running">The camera is watching the room. The screen dims with the light and wakes when you come close.</string>
+    <string name="service_state_hint_stopped">Nothing is running: brightness and wake-ups are not controlled.</string>
+    <string name="notif_channel_name">WakeLux service</string>
+    <string name="notif_channel_desc">Persistent notification of the running service</string>
+    <string name="notif_title">WakeLux is active</string>
+    <string name="notif_idle">Starting camera…</string>
+    <string name="notif_action_stop">Stop</string>
+    <string name="notif_action_wake">Wake</string>
+    <string name="notif_room">room %1$d</string>
+    <string name="notif_screen">screen %1$d</string>
+    <string name="notif_change">change %1$s%%</string>
+    <string name="notif_motion">movement</string>
+    <string name="notif_still">still</string>
+    <string name="notif_camera">camera: %1$s</string>
+    <string name="notif_quiet">quiet hours</string>
+
+    <!-- permissions -->
+    <string name="perm_title">Permissions needed</string>
+    <string name="perm_camera">Camera</string>
+    <string name="perm_camera_why">The camera replaces the light sensor this tablet does not have. Only the average brightness of the picture and the amount of change between frames are computed. Nothing is recorded, saved, or sent anywhere.</string>
+    <string name="perm_write_settings">Change system settings</string>
+    <string name="perm_write_settings_why">Needed to set the screen brightness and the screen-off timeout. Android grants this on a separate settings screen, not with a normal permission dialog.</string>
+    <string name="perm_notifications">Notifications</string>
+    <string name="perm_notifications_why">Android keeps a background service alive only while it shows a notification.</string>
+    <string name="perm_granted">granted</string>
+    <string name="perm_missing">missing</string>
+    <string name="perm_grant">Grant</string>
+    <string name="perm_grant_root">Grant everything with root</string>
+
+    <!-- overview -->
+    <string name="ov_section_live">What the app sees right now</string>
+    <string name="ov_room_light">Room light</string>
+    <string name="ov_room_light_hint">How bright the picture from the camera is, 0–255. This is what drives the screen brightness.</string>
+    <string name="ov_brightness">Screen brightness</string>
+    <string name="ov_brightness_target">target %1$d</string>
+    <string name="ov_change">Change in the picture</string>
+    <string name="ov_change_hint">Share of the picture that changed since the previous second. Presence threshold %1$s%%, wake threshold %2$s%%.</string>
+    <string name="ov_movement">Movement</string>
+    <string name="ov_movement_none">nothing</string>
+    <string name="ov_movement_far">movement in view</string>
+    <string name="ov_movement_near">someone close by</string>
+    <string name="ov_movement_light">room light changed (ignored)</string>
+    <string name="ov_movement_dark">too dark to tell</string>
+    <string name="ov_movement_waiting">waiting for the first frames</string>
+    <string name="ov_screen">Screen</string>
+    <string name="ov_screen_on">on</string>
+    <string name="ov_screen_off">off</string>
+    <string name="ov_proximity">Proximity sensor</string>
+    <string name="ov_proximity_near">something is near</string>
+    <string name="ov_proximity_far">clear</string>
+    <string name="ov_proximity_absent">not present on this device</string>
+    <string name="ov_proximity_off">present, switched off in settings</string>
+
+    <string name="ov_section_counters">Statistics</string>
+    <string name="ov_camera">Camera</string>
+    <string name="ov_frames">Frames processed</string>
+    <string name="ov_restarts">Camera restarts</string>
+    <string name="ov_wakes">Screen wake-ups</string>
+    <string name="ov_last_wake">Last wake-up</string>
+    <string name="ov_light_change">Light switches ignored</string>
+    <string name="ov_uptime">Running for</string>
+    <string name="ov_quiet_active">Quiet hours active now</string>
+    <string name="ov_never">never</string>
+    <string name="ov_ha_status">Home Assistant</string>
+    <string name="ov_preview">Camera view (debug)</string>
+    <string name="ov_preview_hint">Grayscale picture from the camera; pixels that changed since the previous frame are red. Drawn in memory only, never saved.</string>
+    <string name="ov_wake_now">Wake the screen</string>
+    <string name="ov_brightness_failed">Could not set the brightness: grant "Change system settings", or switch on the root fallback.</string>
+
+    <!-- camera states -->
+    <string name="cam_idle">not started</string>
+    <string name="cam_opening">opening</string>
+    <string name="cam_running">working</string>
+    <string name="cam_error">error</string>
+    <string name="cam_restarting">restarting</string>
+
+    <!-- settings: sections -->
+    <string name="sec_features">Main switches</string>
+    <string name="sec_brightness">Brightness</string>
+    <string name="sec_motion">When to react to movement</string>
+    <string name="sec_wake">Waking the screen</string>
+    <string name="sec_screen">Turning the screen off</string>
+    <string name="sec_quiet">Quiet hours</string>
+    <string name="sec_camera">Camera</string>
+    <string name="sec_root">Root extras</string>
+    <string name="sec_ha">Home Assistant</string>
+    <string name="sec_service">Service and diagnostics</string>
+
+    <!-- settings: items -->
+    <string name="set_autobrightness">Adjust the brightness automatically</string>
+    <string name="set_autobrightness_hint">Uses the camera picture instead of the missing light sensor.</string>
+    <string name="set_motion">Wake the screen on movement</string>
+    <string name="set_motion_hint">Without this the screen only follows the system timeout.</string>
+
+    <string name="set_luma_min">Dark room level</string>
+    <string name="set_luma_min_hint">At this camera reading and below the screen goes to its dimmest. Cover the camera with your hand and read the value on the Now tab.</string>
+    <string name="set_luma_max">Bright room level</string>
+    <string name="set_luma_max_hint">At this camera reading and above the screen goes to its brightest.</string>
+    <string name="set_brightness_min">Dimmest screen</string>
+    <string name="set_brightness_min_hint">0–255. Android will not go below 10 on this tablet.</string>
+    <string name="set_brightness_max">Brightest screen</string>
+    <string name="set_alpha">Adaptation speed</string>
+    <string name="set_alpha_hint">Lower is smoother and slower. 0.15 reaches a new level in about ten seconds.</string>
+    <string name="set_hysteresis">Ignore small adjustments</string>
+    <string name="set_hysteresis_hint">Brightness is only changed when the new value differs by at least this much. Prevents visible flicker.</string>
+
+    <string name="set_pixel_threshold">Pixel sensitivity</string>
+    <string name="set_pixel_threshold_hint">How much a single pixel must change to be counted. Lower values also count camera noise.</string>
+    <string name="set_motion_ratio">Movement counts as presence at</string>
+    <string name="set_motion_ratio_hint">Share of the picture that must change. This keeps an already lit screen awake and drives the Home Assistant motion sensor.</string>
+    <string name="set_confirm_frames">Frames in a row to confirm</string>
+    <string name="set_confirm_frames_hint">Filters single noisy frames.</string>
+    <string name="set_light_change_ratio">Ignore whole-picture changes above</string>
+    <string name="set_light_change_ratio_hint">Switching the room light changes almost the whole picture. Anything above this share is treated as a light change, not as movement.</string>
+    <string name="set_dark_cutoff">Ignore movement when darker than</string>
+    <string name="set_dark_cutoff_hint">In complete darkness the camera only produces noise.</string>
+
+    <string name="set_wake_ratio">Wake the screen only above</string>
+    <string name="set_wake_ratio_hint">A person close to the tablet fills much more of the picture than someone moving on a sofa across the room. Raise this so only close-by movement wakes the screen; lower it to wake on anything.</string>
+    <string name="set_wake_confirm">Frames in a row to wake</string>
+    <string name="set_wake_zone">React only in the middle of the picture</string>
+    <string name="set_wake_zone_hint">Wake the screen only when the movement is in front of the tablet, ignoring the edges of the view.</string>
+    <string name="set_wake_zone_size">Size of the middle area</string>
+    <string name="set_wake_zone_size_hint">Percent of width and height. 50 %% means the central quarter of the picture area.</string>
+    <string name="set_proximity">Also wake with the proximity sensor</string>
+    <string name="set_proximity_hint">Instant wake-up when a hand comes close. Most tablets have no proximity sensor — the Now tab shows whether this one does.</string>
+    <string name="set_keep_awake">Keep the screen on while movement continues</string>
+    <string name="set_keep_awake_hint">Uses the presence threshold, so small movements are enough to keep an already lit screen on.</string>
+    <string name="set_wakelock_ms">Wake-up hold time</string>
+    <string name="set_wakelock_ms_hint">How long each wake-up keeps the screen on before the system timeout takes over.</string>
+
+    <string name="set_manage_timeout">Manage the system screen-off timeout</string>
+    <string name="set_screen_timeout">Turn the screen off after</string>
+    <string name="set_screen_timeout_hint">There is no way to turn the screen off directly without root, so this system timeout is what switches it off when nothing moves.</string>
+
+    <string name="set_quiet_enabled">Enable quiet hours</string>
+    <string name="set_quiet_start">From</string>
+    <string name="set_quiet_end">To</string>
+    <string name="set_quiet_max">Brightness limit during quiet hours</string>
+    <string name="set_quiet_no_wake">Do not wake the screen during quiet hours</string>
+
+    <string name="set_facing">Which camera to use</string>
+    <string name="set_facing_front">Front</string>
+    <string name="set_facing_back">Back</string>
+    <string name="set_frame_interval">Look at the picture every</string>
+    <string name="set_frame_interval_hint">One frame per second is enough and costs almost no CPU.</string>
+    <string name="set_watchdog">Restart the camera after no frames for</string>
+    <string name="set_ae_lock">Lock the camera exposure</string>
+    <string name="set_ae_lock_hint">The camera normally evens out the picture, which shrinks the difference between a dark and a bright room. Locking makes the reading more honest, but it is calibrated on the scene present when the service starts.</string>
+    <string name="set_exposure_comp">Exposure correction</string>
+
+    <string name="set_root_enabled">Use root</string>
+    <string name="set_root_fallback">Write system settings through root if the permission is missing</string>
+    <string name="set_root_force_off">Turn the screen off myself when nothing happens</string>
+    <string name="set_root_force_off_hint">Instead of waiting for the system timeout. Useful when another app keeps the screen awake.</string>
+    <string name="set_root_force_off_delay">Turn it off after</string>
+    <string name="set_root_auto_grant">Grant my own permissions on start</string>
+    <string name="set_root_unavailable">This device has no root, or it was not granted to WakeLux.</string>
+
+    <string name="set_ha_enabled">Send values to Home Assistant</string>
+    <string name="set_ha_url">Home Assistant address</string>
+    <string name="set_ha_token">Long-lived access token</string>
+    <string name="set_ha_prefix">Entity name prefix</string>
+    <string name="set_ha_interval">Send every</string>
+    <string name="set_ha_test">Send a test update now</string>
+    <string name="set_ha_privacy">Only numbers are sent: room light, screen brightness, movement, screen state. The picture itself never leaves the tablet.</string>
+    <string name="set_ha_entities">Creates sensor.%1$s_luma, sensor.%1$s_brightness, binary_sensor.%1$s_motion, binary_sensor.%1$s_screen, sensor.%1$s_status.</string>
+
+    <string name="set_boot">Start automatically after a reboot</string>
+    <string name="set_cmd_token">Password for remote commands</string>
+    <string name="set_cmd_token_hint">Leave empty to allow adb commands without a password.</string>
+    <string name="set_diag_file">Write a CSV log to the app folder</string>
+    <string name="set_diag_history">Keep history for</string>
+    <string name="set_reset">Reset everything to defaults</string>
+    <string name="set_export">Copy settings</string>
+    <string name="set_import">Paste settings</string>
+    <string name="set_import_result">Applied: %1$d</string>
+
+    <!-- units -->
+    <string name="unit_seconds"> s</string>
+    <string name="unit_minutes"> min</string>
+    <string name="unit_ms"> ms</string>
+    <string name="unit_percent"> %%</string>
+    <string name="unit_of_255">%1$d of 255</string>
+
+    <!-- curve -->
+    <string name="curve_enabled">Use my own curve</string>
+    <string name="curve_hint">Drag a point to move it, tap an empty spot to add one, long-press a point to remove it. Left to right is the room light, bottom to top is the screen brightness. The red cross is where you are right now.</string>
+    <string name="curve_add">Add a point</string>
+    <string name="curve_reset">Reset the curve</string>
+    <string name="curve_current">Right now: room light %1$d, screen %2$d</string>
+    <string name="curve_simple_hint">The straight line between the dark and bright room levels is used. Switch this on to shape the response by hand.</string>
+    <string name="curve_point">room light %1$d</string>
+    <string name="curve_point_value">screen %1$d</string>
+
+    <!-- diagnostics -->
+    <string name="diag_window_5m">5 min</string>
+    <string name="diag_window_30m">30 min</string>
+    <string name="diag_window_3h">3 h</string>
+    <string name="diag_window_all">All</string>
+    <string name="diag_legend">Yellow — room light, blue — screen brightness, red marks — movement.</string>
+    <string name="diag_events">Event log</string>
+    <string name="diag_clear">Clear</string>
+    <string name="diag_share">Copy the log</string>
+    <string name="diag_copied">Copied to the clipboard</string>
+    <string name="diag_no_data">No data yet — start the service.</string>
+    <string name="diag_stats">min %1$d / average %2$d / max %3$d</string>
+    <string name="diag_file_path">CSV file: %1$s</string>
+    <string name="diag_room_light">Room light</string>
+    <string name="diag_motion_count">Seconds with movement</string>
+
+    <!-- event log messages -->
+    <string name="ev_service_started">service started</string>
+    <string name="ev_service_stopped">service stopped</string>
+    <string name="ev_service_killed">service killed by the system</string>
+    <string name="ev_camera_opened">camera opened: id=%1$d, picture %2$dx%3$d</string>
+    <string name="ev_camera_supports">camera supports: sizes=%1$s, fps ranges=%2$s</string>
+    <string name="ev_camera_params">camera set to: %1$dx%2$d, fps=%3$s, format=%4$d, focus=%5$s, exposure correction=%6$d, exposure lock available=%7$b</string>
+    <string name="ev_camera_hal_error">camera HAL error: %1$d</string>
+    <string name="ev_camera_restart">restarting the camera: %1$s</string>
+    <string name="ev_camera_retry">retrying to open the camera in %1$d s</string>
+    <string name="ev_camera_recreate">recreating the camera controller: %1$s</string>
+    <string name="ev_camera_stuck">state %1$s unchanged for %2$d s</string>
+    <string name="ev_camera_watchdog">watchdog: no frames for %1$d s</string>
+    <string name="ev_camera_settings_changed">camera settings changed</string>
+    <string name="ev_camera_external">external command</string>
+    <string name="ev_camera_not_found">no camera found</string>
+    <string name="ev_light_change">room light change ignored (%1$d %% of the picture)</string>
+    <string name="ev_wake_motion">someone close by: screen woken</string>
+    <string name="ev_wake_quiet">someone close by: wake-up suppressed by quiet hours</string>
+    <string name="ev_wake_proximity">proximity sensor: screen woken</string>
+    <string name="ev_wake_external">screen woken by remote command</string>
+    <string name="ev_wake_external_denied">remote wake-up refused (quiet hours)</string>
+    <string name="ev_screen_on">screen on</string>
+    <string name="ev_screen_off">screen off</string>
+    <string name="ev_screen_off_root">screen turned off through root after inactivity</string>
+    <string name="ev_screen_off_cmd">screen off by remote command: %1$s</string>
+    <string name="ev_screen_off_done">done</string>
+    <string name="ev_screen_off_already">screen was already off</string>
+    <string name="ev_screen_off_no_root">root not available</string>
+    <string name="ev_screen_off_disabled">switched off in settings</string>
+    <string name="ev_screen_off_failed">the su command failed</string>
+    <string name="ev_cmd_set">remote command: %1$s = %2$s</string>
+    <string name="ev_cmd_rejected">remote command rejected: %1$s = %2$s</string>
+    <string name="ev_ha_test">test update sent to Home Assistant</string>
+    <string name="ev_ha_error">Home Assistant: %1$s</string>
+    <string name="ev_no_write_settings">no permission to change system settings — brightness will not be applied</string>
+    <string name="ev_timeout_failed">could not set the screen-off timeout (missing permission?)</string>
+    <string name="ev_root_granted">permissions granted through root</string>
+    <string name="ev_boot">autostart after %1$s</string>
+    <string name="ev_proximity_missing">proximity sensor requested but this device has none</string>
+</resources>
