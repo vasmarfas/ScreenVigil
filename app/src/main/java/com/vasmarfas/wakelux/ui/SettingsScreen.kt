@@ -27,6 +27,7 @@ fun SettingsScreen(
     prefs: Prefs,
     rootAvailable: Boolean,
     proximityAvailable: Boolean,
+    haStatus: String,
     onTestHa: () -> Unit,
     onExport: () -> Unit,
     onImport: () -> Unit,
@@ -322,6 +323,12 @@ fun SettingsScreen(
             ) { prefs.putInt(Prefs.KEY_HA_INTERVAL, it) }
             Hint(stringResource(R.string.set_ha_entities, config.haPrefix))
             OutlinedButton(onClick = onTestHa) { Text(stringResource(R.string.set_ha_test)) }
+            StatRow(
+                stringResource(R.string.ha_status_label),
+                haStatus.ifBlank { stringResource(R.string.ha_status_none) },
+                highlight = haStatus.isNotBlank() && haStatus != "ok",
+            )
+            haErrorHint(haStatus)?.let { Hint(it) }
         }
 
         SectionCard(stringResource(R.string.sec_service)) {
@@ -355,4 +362,13 @@ fun SettingsScreen(
 
         Spacer(Modifier.height(24.dp))
     }
+}
+
+@Composable
+private fun haErrorHint(status: String): String? = when {
+    status.isBlank() || status == "ok" -> null
+    status.contains("401") || status.contains("403") -> stringResource(R.string.ha_hint_401)
+    status.contains("404") -> stringResource(R.string.ha_hint_404)
+    status.startsWith("HTTP") -> null
+    else -> stringResource(R.string.ha_hint_network)
 }

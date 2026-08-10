@@ -18,6 +18,11 @@ import java.net.URL
  */
 class HaPublisher(private val context: Context) {
 
+    companion object {
+        const val OK = "ok"
+    }
+
+
     private val thread = HandlerThread("wakelux-ha").apply { start() }
     private val handler = Handler(thread.looper)
 
@@ -79,7 +84,7 @@ class HaPublisher(private val context: Context) {
                 },
             )
             val failure = results.firstOrNull { it != null }
-            WakeLuxState.update { it.copy(haStatus = failure ?: "ok") }
+            report(failure ?: OK)
             if (failure != null) Diag.event(context.getString(R.string.ev_ha_error, failure))
         }
     }
@@ -122,6 +127,10 @@ class HaPublisher(private val context: Context) {
         } finally {
             runCatching { connection?.disconnect() }
         }
+    }
+
+    private fun report(status: String) {
+        WakeLuxState.update { it.copy(haStatus = status, haStatusAt = System.currentTimeMillis()) }
     }
 
     fun release() {

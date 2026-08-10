@@ -28,6 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -87,12 +88,29 @@ private fun WakeLuxApp(resumeTick: Int) {
     var tab by remember { mutableIntStateOf(0) }
     var permissionRefresh by remember { mutableIntStateOf(0) }
     var rootAvailable by remember { mutableIntStateOf(0) }
+    var haTestAwaitedSince by remember { mutableLongStateOf(0L) }
+    val haResultOk = stringResource(R.string.ha_result_ok)
+    val haResultFailFormat = stringResource(R.string.ha_result_fail)
+
+    LaunchedEffect(live.haStatusAt) {
+        if (haTestAwaitedSince > 0L && live.haStatusAt >= haTestAwaitedSince) {
+            haTestAwaitedSince = 0L
+            val message = if (live.haStatus == "ok") {
+                haResultOk
+            } else {
+                String.format(haResultFailFormat, live.haStatus)
+            }
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+        }
+    }
 
     LaunchedEffect(Unit) {
         val available = withContext(Dispatchers.IO) { RootShell.isAvailable() }
         rootAvailable = if (available) 1 else 0
         WakeLuxState.update { it.copy(rootAvailable = available) }
     }
+
+    val importResultFormat = stringResource(R.string.set_import_result)
 
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions(),
@@ -151,9 +169,10 @@ private fun WakeLuxApp(resumeTick: Int) {
                 prefs = prefs,
                 rootAvailable = permissions.rootAvailable,
                 proximityAvailable = live.proximityAvailable,
+                haStatus = live.haStatus,
                 onTestHa = {
+                    haTestAwaitedSince = System.currentTimeMillis()
                     KioskSensorService.command(context, KioskSensorService.ACTION_HA_TEST)
-                    Toast.makeText(context, R.string.set_ha_test, Toast.LENGTH_SHORT).show()
                 },
                 onExport = {
                     copyToClipboard(context, prefs.exportJson())
@@ -164,7 +183,7 @@ private fun WakeLuxApp(resumeTick: Int) {
                     val applied = if (text.isNullOrBlank()) 0 else prefs.importJson(text)
                     Toast.makeText(
                         context,
-                        context.getString(R.string.set_import_result, applied),
+                        String.format(importResultFormat, applied),
                         Toast.LENGTH_SHORT,
                     ).show()
                 },

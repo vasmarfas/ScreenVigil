@@ -263,4 +263,12 @@
     <string name="ev_root_granted">разрешения выданы через root</string>
     <string name="ev_boot">автозапуск после %1$s</string>
     <string name="ev_proximity_missing">запрошен датчик приближения, но на этом устройстве его нет</string>
+    <string name="ha_result_ok">Home Assistant принял значения</string>
+    <string name="ha_result_fail">Home Assistant отказал: %1$s</string>
+    <string name="ha_status_label">Последняя отправка</string>
+    <string name="ha_status_none">ещё не отправляли</string>
+    <string name="ha_hint_401">Токен отклонён. Долгоживущий токен подойдёт только от учётной записи администратора — запись состояний через REST API требует прав админа.</string>
+    <string name="ha_hint_404">Адрес отвечает, но путь API не найден. Проверьте, что URL ведёт на сам Home Assistant, без лишнего пути в конце.</string>
+    <string name="ha_hint_network">Не удалось достучаться до Home Assistant. Проверьте адрес, порт и что планшет в той же сети.</string>
+    <string name="ha_hint_empty">Сначала заполните адрес и токен.</string>
 </resources>

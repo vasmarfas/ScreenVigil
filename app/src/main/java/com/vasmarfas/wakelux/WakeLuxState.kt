@@ -38,6 +38,7 @@ object WakeLuxState {
         val quietActive: Boolean = false,
         val lastFrameAt: Long = 0L,
         val haStatus: String = "",
+        val haStatusAt: Long = 0L,
         val rootAvailable: Boolean = false,
     )
 

@@ -263,4 +263,12 @@
     <string name="ev_root_granted">permissions granted through root</string>
     <string name="ev_boot">autostart after %1$s</string>
     <string name="ev_proximity_missing">proximity sensor requested but this device has none</string>
+    <string name="ha_result_ok">Home Assistant accepted the values</string>
+    <string name="ha_result_fail">Home Assistant refused: %1$s</string>
+    <string name="ha_status_label">Last send</string>
+    <string name="ha_status_none">not sent yet</string>
+    <string name="ha_hint_401">The token is rejected. A long-lived token only works here if it belongs to an administrator account — writing states over the REST API requires admin rights.</string>
+    <string name="ha_hint_404">The address is reachable but the API path was not found. Check that the URL points at Home Assistant itself, without a trailing path.</string>
+    <string name="ha_hint_network">Home Assistant could not be reached. Check the address, the port and that the tablet is on the same network.</string>
+    <string name="ha_hint_empty">Fill in the address and the token first.</string>
 </resources>
