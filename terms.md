@@ -2,11 +2,11 @@
 
 **Effective Date:** 2026-08-11
 
-These Terms of Use ("Terms") govern your use of **WakeLux** (the "App"), developed by vasmarfas ("we," "our," or "us"). By downloading, installing, or using the App, you agree to these Terms. If you don't agree, don't use the App.
+These Terms of Use ("Terms") govern your use of **ScreenVigil** (the "App"), developed by vasmarfas ("we," "our," or "us"). By downloading, installing, or using the App, you agree to these Terms. If you don't agree, don't use the App.
 
 ## 1. What the App Does
 
-WakeLux is an Android app that uses the device camera to estimate room brightness and detect movement, and uses that to adjust screen brightness and wake the screen. It runs entirely on your device. It has no account system, no backend service, and no cloud component of ours. An optional feature lets you connect the App to a Home Assistant server that you configure and control yourself — see the [Privacy Policy](privacy-policy.md) for what that feature transmits and to whom.
+ScreenVigil is an Android app that uses the device camera to estimate room brightness and detect movement, and uses that to adjust screen brightness and wake the screen. It runs entirely on your device. It has no account system, no backend service, and no cloud component of ours. An optional feature lets you connect the App to a Home Assistant server that you configure and control yourself — see the [Privacy Policy](privacy-policy.md) for what that feature transmits and to whom.
 
 ## 2. License to Use the App
 
@@ -18,13 +18,13 @@ If you obtained the App from an app store (such as Google Play), your use is als
 
 Forking the project's repository to prepare and submit a pull request is the normal way to contribute, and these Terms don't restrict it. Beyond that, you agree not to:
 
-- rebrand a copy or a modified version of the App — give it a different name, icon, or application ID meant to present it as an independent app, or keep the WakeLux name on one — and distribute either to other users;
+- rebrand a copy or a modified version of the App — give it a different name, icon, or application ID meant to present it as an independent app, or keep the ScreenVigil name on one — and distribute either to other users;
 - publish or ship a modified version of the App to other users as a standalone alternative (an app store listing, a separate release, a built APK handed out to people who aren't contributing to it) rather than as a contribution in progress;
-- represent a modified or unofficial version of the App as being the WakeLux project, or as being endorsed by, affiliated with, or supported by us;
+- represent a modified or unofficial version of the App as being the ScreenVigil project, or as being endorsed by, affiliated with, or supported by us;
 - use the App for any commercial purpose without our prior written permission;
 - attempt to circumvent, disable, or interfere with any part of the App's operation in a way intended to harm other users or third-party systems (for example, systems you connect the App to).
 
-Improving WakeLux is welcome and encouraged — through pull requests, patches, and issues submitted to the official repository. See [NOTICE.md](NOTICE.md) for exactly what that means for your contribution.
+Improving ScreenVigil is welcome and encouraged — through pull requests, patches, and issues submitted to the official repository. See [NOTICE.md](NOTICE.md) for exactly what that means for your contribution.
 
 ## 4. Third-Party Integrations
 
@@ -55,4 +55,4 @@ Your rights under these Terms and under the [License](LICENSE) end automatically
 Questions about these Terms can be sent through the project's issue tracker.
 
 **Developer:** vasmarfas
-**Contact:** https://github.com/vasmarfas/WakeLux/issues
+**Contact:** https://github.com/vasmarfas/ScreenVigil/issues

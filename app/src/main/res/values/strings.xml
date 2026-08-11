@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WakeLux</string>
+    <string name="app_name">ScreenVigil</string>
 
     <!-- tabs -->
     <string name="tab_overview">Now</string>
@@ -14,9 +14,9 @@
     <string name="service_stopped">Stopped</string>
     <string name="service_state_hint_running">The camera is watching the room. The screen dims with the light and wakes when you come close.</string>
     <string name="service_state_hint_stopped">Nothing is running: brightness and wake-ups are not controlled.</string>
-    <string name="notif_channel_name">WakeLux service</string>
+    <string name="notif_channel_name">ScreenVigil service</string>
     <string name="notif_channel_desc">Persistent notification of the running service</string>
-    <string name="notif_title">WakeLux is active</string>
+    <string name="notif_title">ScreenVigil is active</string>
     <string name="notif_idle">Starting camera…</string>
     <string name="notif_action_stop">Stop</string>
     <string name="notif_action_wake">Wake</string>
@@ -169,7 +169,7 @@
     <string name="set_root_force_off_hint">Instead of waiting for the system timeout. Useful when another app keeps the screen awake.</string>
     <string name="set_root_force_off_delay">Turn it off after</string>
     <string name="set_root_auto_grant">Grant my own permissions on start</string>
-    <string name="set_root_unavailable">This device has no root, or it was not granted to WakeLux.</string>
+    <string name="set_root_unavailable">This device has no root, or it was not granted to ScreenVigil.</string>
 
     <string name="set_ha_enabled">Send values to Home Assistant</string>
     <string name="set_ha_url">Home Assistant address</string>

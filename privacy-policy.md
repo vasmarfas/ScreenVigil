@@ -2,7 +2,7 @@
 
 **Effective Date:** 2026-08-11
 
-**WakeLux** ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our Android application (the "App").
+**ScreenVigil** ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our Android application (the "App").
 
 ## 1. Information Collection and Use
 
@@ -64,4 +64,4 @@ We may update this Privacy Policy from time to time. Material changes will be re
 If you have any questions or concerns about this Privacy Policy, please contact us.
 
 **Developer:** vasmarfas
-**Contact:** https://github.com/vasmarfas/WakeLux/issues
+**Contact:** https://github.com/vasmarfas/ScreenVigil/issues

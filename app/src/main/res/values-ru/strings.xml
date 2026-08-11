@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WakeLux</string>
+    <string name="app_name">ScreenVigil</string>
 
     <!-- tabs -->
     <string name="tab_overview">Сейчас</string>
@@ -14,9 +14,9 @@
     <string name="service_stopped">Остановлен</string>
     <string name="service_state_hint_running">Камера следит за комнатой. Экран притухает вместе со светом и включается, когда вы подходите.</string>
     <string name="service_state_hint_stopped">Ничего не работает: яркость и пробуждение экрана не управляются.</string>
-    <string name="notif_channel_name">Сервис WakeLux</string>
+    <string name="notif_channel_name">Сервис ScreenVigil</string>
     <string name="notif_channel_desc">Постоянное уведомление работающего сервиса</string>
-    <string name="notif_title">WakeLux работает</string>
+    <string name="notif_title">ScreenVigil работает</string>
     <string name="notif_idle">Запуск камеры…</string>
     <string name="notif_action_stop">Стоп</string>
     <string name="notif_action_wake">Разбудить</string>
@@ -169,7 +169,7 @@
     <string name="set_root_force_off_hint">Вместо ожидания системного таймаута. Полезно, если другое приложение удерживает экран.</string>
     <string name="set_root_force_off_delay">Гасить через</string>
     <string name="set_root_auto_grant">Выдавать себе разрешения при запуске</string>
-    <string name="set_root_unavailable">На устройстве нет root или он не выдан WakeLux.</string>
+    <string name="set_root_unavailable">На устройстве нет root или он не выдан ScreenVigil.</string>
 
     <string name="set_ha_enabled">Отправлять значения в Home Assistant</string>
     <string name="set_ha_url">Адрес Home Assistant</string>

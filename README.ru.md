@@ -1,4 +1,4 @@
-# WakeLux
+# ScreenVigil
 
 Автояркость по камере и включение экрана при подходе — для Android-планшетов без датчика освещённости.
 
@@ -10,7 +10,7 @@
 
 Дешёвый планшет — очевидный кандидат на роль настенной панели Home Assistant, и у многих из них нет датчика освещённости. Если `android.sensor.light` отсутствует, Android вообще не показывает переключатель автояркости, и экран остаётся на том уровне, который вы выставили руками: днём тускло, ночью слепит. Вторая беда обратная скринсейверу — панель должна быть тёмной, пока к ней никто не подходит.
 
-WakeLux закрывает обе задачи фронтальной камерой. Раз в секунду берётся один кадр превью: среднее по Y-плоскости даёт оценку освещённости, разница с предыдущим кадром — движение. Двух чисел в секунду хватает, чтобы вести `Settings.System.SCREEN_BRIGHTNESS` и дёргать короткий wake lock.
+ScreenVigil закрывает обе задачи фронтальной камерой. Раз в секунду берётся один кадр превью: среднее по Y-плоскости даёт оценку освещённости, разница с предыдущим кадром — движение. Двух чисел в секунду хватает, чтобы вести `Settings.System.SCREEN_BRIGHTNESS` и дёргать короткий wake lock.
 
 Поток кадров не выходит за пределы `onPreviewFrame`. Кадры не сохраняются, не кодируются и никуда не отправляются — буфер переиспользуется и затирается каждую секунду. При включённой интеграции с Home Assistant по сети уходят только числа.
 
@@ -33,8 +33,8 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 `WRITE_SETTINGS` — это appop, а не рантайм-разрешение, поэтому `pm grant` для него не работает. Либо кнопка в приложении, либо оба разрешения через adb, что удобнее для планшета, уже прикрученного к стене:
 
 ```bash
-adb shell pm grant com.vasmarfas.wakelux android.permission.CAMERA
-adb shell appops set com.vasmarfas.wakelux WRITE_SETTINGS allow
+adb shell pm grant com.vasmarfas.screenvigil android.permission.CAMERA
+adb shell appops set com.vasmarfas.screenvigil WRITE_SETTINGS allow
 ```
 
 ## Настройка
@@ -53,7 +53,7 @@ adb shell appops set com.vasmarfas.wakelux WRITE_SETTINGS allow
 
 ## Пробуждение: присутствие и близость
 
-Один порог движения в жилой комнате бесполезен. Чувствительности, достаточной чтобы поймать проходящего мимо человека, хватает и на шевеление на диване, и панель горит весь вечер. WakeLux считает по одной и той же разнице кадров два порога:
+Один порог движения в жилой комнате бесполезен. Чувствительности, достаточной чтобы поймать проходящего мимо человека, хватает и на шевеление на диване, и панель горит весь вечер. ScreenVigil считает по одной и той же разнице кадров два порога:
 
 | Настройка | Что делает | По умолчанию |
 |---|---|---|
@@ -75,17 +75,17 @@ adb shell appops set com.vasmarfas.wakelux WRITE_SETTINGS allow
 Приложение умеет отправлять свои числа в `/api/states`, превращая планшет в датчик освещённости и присутствия для комнаты, где он висит.
 
 1. В Home Assistant откройте профиль → **Безопасность** → **Долгоживущие токены доступа** и создайте токен. **Он должен принадлежать учётной записи администратора** — запись состояний через REST API требует прав админа, и токен обычного пользователя вернёт `401 Unauthorized`, хотя читать им можно.
-2. В WakeLux впишите базовый URL (`http://homeassistant.local:8123`), вставьте токен, включите интеграцию и нажмите *Отправить тестовое значение*. Результат появится прямо под кнопкой.
+2. В ScreenVigil впишите базовый URL (`http://homeassistant.local:8123`), вставьте токен, включите интеграцию и нажмите *Отправить тестовое значение*. Результат появится прямо под кнопкой.
 
-Создаваемые сущности, где `wakelux` — настраиваемый префикс:
+Создаваемые сущности, где `screenvigil` — настраиваемый префикс:
 
 | Сущность | Что это |
 |---|---|
-| `sensor.wakelux_luma` | освещённость в комнате, 0–255 |
-| `sensor.wakelux_brightness` | текущая яркость экрана, 0–255 |
-| `binary_sensor.wakelux_motion` | движение перед планшетом, `device_class: motion` |
-| `binary_sensor.wakelux_screen` | включён ли экран |
-| `sensor.wakelux_status` | состояние камеры; кадры, перезапуски, пробуждения и время работы в атрибутах |
+| `sensor.screenvigil_luma` | освещённость в комнате, 0–255 |
+| `sensor.screenvigil_brightness` | текущая яркость экрана, 0–255 |
+| `binary_sensor.screenvigil_motion` | движение перед планшетом, `device_class: motion` |
+| `binary_sensor.screenvigil_screen` | включён ли экран |
+| `sensor.screenvigil_status` | состояние камеры; кадры, перезапуски, пробуждения и время работы в атрибутах |
 
 Значения уходят по интервалу и сразу же при изменении движения или состояния экрана.
 
@@ -93,17 +93,17 @@ adb shell appops set com.vasmarfas.wakelux WRITE_SETTINGS allow
 
 ## Если планшет работает киоском
 
-- Если ваше киоск-приложение само управляет яркостью (Fully Kiosk это делает в Device Management), выключите это. Яркость на уровне окна перекрывает системное значение, которое пишет WakeLux. Проверяется так: `adb shell dumpsys power | grep mScreenBrightnessOverrideFromWindowManager`, должно быть `-1`. Приложение Home Assistant яркость окна не трогает.
+- Если ваше киоск-приложение само управляет яркостью (Fully Kiosk это делает в Device Management), выключите это. Яркость на уровне окна перекрывает системное значение, которое пишет ScreenVigil. Проверяется так: `adb shell dumpsys power | grep mScreenBrightnessOverrideFromWindowManager`, должно быть `-1`. Приложение Home Assistant яркость окна не трогает.
 - Сервис поднимается по `BOOT_COMPLETED`. Части прошивок нужен белый список автозапуска — перезагрузите планшет и проверьте, вернулось ли уведомление.
-- Погасить экран публичным API нельзя, поэтому WakeLux пишет `SCREEN_OFF_TIMEOUT` (по умолчанию 30 с) и отдаёт это системе. Исходное значение возвращается при остановке сервиса.
+- Погасить экран публичным API нельзя, поэтому ScreenVigil пишет `SCREEN_OFF_TIMEOUT` (по умолчанию 30 с) и отдаёт это системе. Исходное значение возвращается при остановке сервиса.
 
 ## Управление снаружи
 
 Любое действие и любая настройка доступны через broadcast, что удобно для скриптов и shell-команд Home Assistant:
 
 ```bash
-adb shell am broadcast -a com.vasmarfas.wakelux.COMMAND --es cmd status
-adb shell am broadcast -a com.vasmarfas.wakelux.COMMAND --es cmd set --es key wake_motion_ratio --es value 0.25
+adb shell am broadcast -a com.vasmarfas.screenvigil.COMMAND --es cmd status
+adb shell am broadcast -a com.vasmarfas.screenvigil.COMMAND --es cmd set --es key wake_motion_ratio --es value 0.25
 ```
 
 Команды: `start`, `stop`, `status`, `wake`, `screen_off`, `restart_camera`, `set`, `export`, `import`, `reset`, `csv`. `status` отдаёт JSON со всем, что приложение видит. Если задать пароль в настройках, к каждой команде добавляется `--es token <значение>`.
@@ -150,7 +150,7 @@ Android не доставляет broadcast приложению, которое
 | `ae_lock` / `exposure_compensation` | false / 0 | управление экспозицией камеры |
 | `quiet_enabled`, `quiet_start_min`, `quiet_end_min`, `quiet_brightness_max`, `quiet_no_wake` | false, 1380, 420, 40, false | тихие часы, минуты от полуночи |
 | `root_enabled`, `root_settings_fallback`, `root_force_screen_off`, `root_force_screen_off_delay_ms`, `root_auto_grant` | false, true, false, 30000, false | возможности с root |
-| `ha_enabled`, `ha_url`, `ha_token`, `ha_prefix`, `ha_interval_sec` | false, "", "", wakelux, 30 | Home Assistant |
+| `ha_enabled`, `ha_url`, `ha_token`, `ha_prefix`, `ha_interval_sec` | false, "", "", screenvigil, 30 | Home Assistant |
 | `start_on_boot` | true | автозапуск после перезагрузки |
 | `command_token` | "" | пароль для broadcast-команд |
 | `diag_file_log`, `diag_history_min` | false, 60 | запись CSV и глубина истории для графика |

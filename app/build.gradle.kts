@@ -4,13 +4,13 @@ plugins {
 }
 
 android {
-    namespace = "com.vasmarfas.wakelux"
+    namespace = "com.vasmarfas.screenvigil"
     compileSdk {
         version = release(37)
     }
 
     defaultConfig {
-        applicationId = "com.vasmarfas.wakelux"
+        applicationId = "com.vasmarfas.screenvigil"
         minSdk = 23
         targetSdk = 37
         versionCode = 1

@@ -22,6 +22,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "WakeLux"
+rootProject.name = "ScreenVigil"
 include(":app")
  

@@ -12,17 +12,17 @@ Not legal advice, just a summary — read [LICENSE](LICENSE) for the actual term
 
 ## Forking and contributing
 
-Forking [github.com/vasmarfas/WakeLux](https://github.com/vasmarfas/WakeLux) to prepare and submit a pull request is the normal way to contribute, and this notice doesn't restrict it. Keep a fork around for as long as you're working toward a PR, sync it with upstream, iterate on it — that's exactly what it's for. Keeping a personal fork you never publish is ordinary personal use and is fine regardless.
+Forking [github.com/vasmarfas/ScreenVigil](https://github.com/vasmarfas/ScreenVigil) to prepare and submit a pull request is the normal way to contribute, and this notice doesn't restrict it. Keep a fork around for as long as you're working toward a PR, sync it with upstream, iterate on it — that's exactly what it's for. Keeping a personal fork you never publish is ordinary personal use and is fine regardless.
 
 What isn't permitted is treating a fork as an independent product rather than a contribution in progress:
 
 - **Rebranding** a fork — a different name, icon, or application ID meant to present it as a separate app — is not allowed; see [Name, icon and package ID](#name-icon-and-package-id) below.
-- **Distributing** a fork to other users as an alternative or competing version — publishing it to an app store, advertising it, or otherwise shipping it to people who aren't contributing to it — is not allowed, even if you keep the WakeLux name.
+- **Distributing** a fork to other users as an alternative or competing version — publishing it to an app store, advertising it, or otherwise shipping it to people who aren't contributing to it — is not allowed, even if you keep the ScreenVigil name.
 - Maintaining a fork as ongoing, separately-promoted development that isn't headed toward a pull request against the repository above isn't what forking is for. A fork sitting on GitHub with no active PR is not a problem by itself; publishing or promoting it as a standalone alternative is.
 
 ## Name, icon and package ID
 
-The name **WakeLux**, the app icon, and the Android application ID `com.vasmarfas.wakelux` identify official builds of this project only, distributed by the maintainer. They are not covered by the code license and may not be used to label, describe, or identify any other build, fork, or distribution — even one that would otherwise be permitted — nor to imply that an unofficial build is endorsed by or affiliated with this project.
+The name **ScreenVigil**, the app icon, and the Android application ID `com.vasmarfas.screenvigil` identify official builds of this project only, distributed by the maintainer. They are not covered by the code license and may not be used to label, describe, or identify any other build, fork, or distribution — even one that would otherwise be permitted — nor to imply that an unofficial build is endorsed by or affiliated with this project.
 
 ## Contributing
 

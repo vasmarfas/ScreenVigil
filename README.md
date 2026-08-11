@@ -1,4 +1,4 @@
-# WakeLux
+# ScreenVigil
 
 Camera-driven auto-brightness and wake-on-approach for Android tablets that have no ambient light sensor.
 
@@ -10,7 +10,7 @@ Camera-driven auto-brightness and wake-on-approach for Android tablets that have
 
 Cheap tablets are the obvious choice for a wall-mounted Home Assistant dashboard, and a lot of them ship without an ambient light sensor. Android hides the auto-brightness toggle entirely when `android.sensor.light` is missing, so the screen stays at whatever level you left it: too dim during the day, blinding at night. The second annoyance is the opposite of a screensaver — you want the panel dark most of the time and lit when you walk up to it.
 
-WakeLux solves both from the front camera. Once a second it grabs one small preview frame, averages the luma plane to estimate room brightness, and diffs it against the previous frame to detect movement. Two numbers per second are enough to drive `Settings.System.SCREEN_BRIGHTNESS` and a short wake lock.
+ScreenVigil solves both from the front camera. Once a second it grabs one small preview frame, averages the luma plane to estimate room brightness, and diffs it against the previous frame to detect movement. Two numbers per second are enough to drive `Settings.System.SCREEN_BRIGHTNESS` and a short wake lock.
 
 The camera stream never leaves `onPreviewFrame`. Frames aren't stored, encoded, or uploaded — the buffer is reused and overwritten every second. With the optional Home Assistant integration the app sends numbers over HTTP, nothing else.
 
@@ -33,8 +33,8 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 `WRITE_SETTINGS` is an appop, not a runtime permission, so `pm grant` won't help. Either use the button in the app, or grant both over adb — handy for a tablet that is already screwed to a wall:
 
 ```bash
-adb shell pm grant com.vasmarfas.wakelux android.permission.CAMERA
-adb shell appops set com.vasmarfas.wakelux WRITE_SETTINGS allow
+adb shell pm grant com.vasmarfas.screenvigil android.permission.CAMERA
+adb shell appops set com.vasmarfas.screenvigil WRITE_SETTINGS allow
 ```
 
 ## Setup
@@ -53,7 +53,7 @@ Brightness follows a straight line between the two points. If you want a differe
 
 ## Wake-up: presence vs. proximity
 
-A single motion threshold is useless in a living room. Anything sensitive enough to catch you walking past also fires when someone shifts on the sofa, and the panel lights up all evening. WakeLux keeps two thresholds over the same frame diff:
+A single motion threshold is useless in a living room. Anything sensitive enough to catch you walking past also fires when someone shifts on the sofa, and the panel lights up all evening. ScreenVigil keeps two thresholds over the same frame diff:
 
 | Setting | Effect | Default |
 |---|---|---|
@@ -75,17 +75,17 @@ One hard limit: in a fully dark room the camera has nothing to work with, so an 
 The app can POST its numbers to `/api/states`, turning the tablet into a light and presence sensor for the room it hangs in.
 
 1. In Home Assistant open your profile → **Security** → **Long-lived access tokens** → create one. **It must belong to an administrator account** — writing states over the REST API requires admin rights, and a non-admin token fails with `401 Unauthorized` even though it can read fine.
-2. In WakeLux, fill in the base URL (`http://homeassistant.local:8123`), paste the token, enable the integration and press *Send a test update now*. The result is shown right under the button.
+2. In ScreenVigil, fill in the base URL (`http://homeassistant.local:8123`), paste the token, enable the integration and press *Send a test update now*. The result is shown right under the button.
 
-Created entities, with `wakelux` as the configurable prefix:
+Created entities, with `screenvigil` as the configurable prefix:
 
 | Entity | Meaning |
 |---|---|
-| `sensor.wakelux_luma` | room brightness, 0–255 |
-| `sensor.wakelux_brightness` | current screen brightness, 0–255 |
-| `binary_sensor.wakelux_motion` | movement in front of the tablet, `device_class: motion` |
-| `binary_sensor.wakelux_screen` | screen on/off |
-| `sensor.wakelux_status` | camera state; frames, restarts, wake-ups and uptime as attributes |
+| `sensor.screenvigil_luma` | room brightness, 0–255 |
+| `sensor.screenvigil_brightness` | current screen brightness, 0–255 |
+| `binary_sensor.screenvigil_motion` | movement in front of the tablet, `device_class: motion` |
+| `binary_sensor.screenvigil_screen` | screen on/off |
+| `sensor.screenvigil_status` | camera state; frames, restarts, wake-ups and uptime as attributes |
 
 Updates are sent on an interval and immediately when motion or screen state flips.
 
@@ -93,17 +93,17 @@ Entities created through the REST API are not registered in the entity registry 
 
 ## Running on a kiosk
 
-- If your kiosk app manages brightness itself (Fully Kiosk does, under Device Management), turn that off. A window-level `screenBrightness` overrides the system value WakeLux writes. Check with `adb shell dumpsys power | grep mScreenBrightnessOverrideFromWindowManager` — it should print `-1`. The Home Assistant companion app doesn't set it.
+- If your kiosk app manages brightness itself (Fully Kiosk does, under Device Management), turn that off. A window-level `screenBrightness` overrides the system value ScreenVigil writes. Check with `adb shell dumpsys power | grep mScreenBrightnessOverrideFromWindowManager` — it should print `-1`. The Home Assistant companion app doesn't set it.
 - The service starts on `BOOT_COMPLETED`. Some Chinese and Lenovo firmwares need the app added to an autostart whitelist; reboot and check whether the notification comes back.
-- Screens can't be turned off through a public API, so WakeLux writes `SCREEN_OFF_TIMEOUT` (30 s by default) and lets the system do it. The original value is restored when you stop the service.
+- Screens can't be turned off through a public API, so ScreenVigil writes `SCREEN_OFF_TIMEOUT` (30 s by default) and lets the system do it. The original value is restored when you stop the service.
 
 ## Remote control
 
 Every action and setting is reachable over broadcast, which is convenient for scripting or Home Assistant shell commands:
 
 ```bash
-adb shell am broadcast -a com.vasmarfas.wakelux.COMMAND --es cmd status
-adb shell am broadcast -a com.vasmarfas.wakelux.COMMAND --es cmd set --es key wake_motion_ratio --es value 0.25
+adb shell am broadcast -a com.vasmarfas.screenvigil.COMMAND --es cmd status
+adb shell am broadcast -a com.vasmarfas.screenvigil.COMMAND --es cmd set --es key wake_motion_ratio --es value 0.25
 ```
 
 `start`, `stop`, `status`, `wake`, `screen_off`, `restart_camera`, `set`, `export`, `import`, `reset`, `csv`. `status` returns JSON with everything the app currently sees. Set a password in the settings to require `--es token <value>` on every command.
@@ -150,7 +150,7 @@ Keys below are what `cmd set` and the exported JSON use.
 | `ae_lock` / `exposure_compensation` | false / 0 | camera exposure control |
 | `quiet_enabled`, `quiet_start_min`, `quiet_end_min`, `quiet_brightness_max`, `quiet_no_wake` | false, 1380, 420, 40, false | quiet hours, minutes from midnight |
 | `root_enabled`, `root_settings_fallback`, `root_force_screen_off`, `root_force_screen_off_delay_ms`, `root_auto_grant` | false, true, false, 30000, false | root extras |
-| `ha_enabled`, `ha_url`, `ha_token`, `ha_prefix`, `ha_interval_sec` | false, "", "", wakelux, 30 | Home Assistant |
+| `ha_enabled`, `ha_url`, `ha_token`, `ha_prefix`, `ha_interval_sec` | false, "", "", screenvigil, 30 | Home Assistant |
 | `start_on_boot` | true | autostart after reboot |
 | `command_token` | "" | password for broadcast commands |
 | `diag_file_log`, `diag_history_min` | false, 60 | CSV logging and chart history depth |

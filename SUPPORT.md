@@ -1,6 +1,6 @@
 # Support the Project
 
-Thank you for your interest in WakeLux! If you'd like to support the development, here are several ways to do so:
+Thank you for your interest in ScreenVigil! If you'd like to support the development, here are several ways to do so:
 
 ## 💰 Ways to Support
 
@@ -14,14 +14,14 @@ UQCYtzsovMRC1vFrXxxDXFlIetj7N_0KKHEwsJVaxKROYzNS
 
 One of the best ways to support the project is to leave a review on Google Play!
 
-https://play.google.com/store/apps/details?id=com.vasmarfas.wakelux
+https://play.google.com/store/apps/details?id=com.vasmarfas.screenvigil
 
 Your reviews help other users discover the app and motivate continued development.
 
 ## 📧 Contact
 
 If you have questions or suggestions, you can:
-- Create an issue on [GitHub](https://github.com/vasmarfas/WakeLux/issues)
+- Create an issue on [GitHub](https://github.com/vasmarfas/ScreenVigil/issues)
 - Write in project discussions
 
 ---
