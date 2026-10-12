@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
 import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -36,6 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.app.NotificationManagerCompat
 import com.vasmarfas.screenvigil.diag.Diag
+import com.vasmarfas.screenvigil.kiosk.ForegroundWatcher
 import com.vasmarfas.screenvigil.root.RootShell
 import com.vasmarfas.screenvigil.ui.CurveScreen
 import com.vasmarfas.screenvigil.ui.DiagScreen
@@ -122,7 +124,12 @@ private fun ScreenVigilApp(resumeTick: Int) {
                 PackageManager.PERMISSION_GRANTED,
             writeSettings = SettingsWriter.canWriteSystem(context),
             notifications = NotificationManagerCompat.from(context).areNotificationsEnabled(),
+            batteryUnrestricted = context.getSystemService(PowerManager::class.java)
+                .isIgnoringBatteryOptimizations(context.packageName),
             rootAvailable = rootAvailable == 1,
+            usageAccess = ForegroundWatcher(context).hasAccess(),
+            overlayAllowed = Build.VERSION.SDK_INT < Build.VERSION_CODES.Q ||
+                Settings.canDrawOverlays(context),
         )
     }
 
@@ -161,6 +168,7 @@ private fun ScreenVigilApp(resumeTick: Int) {
                 },
                 onRequestWriteSettings = { openWriteSettings(context) },
                 onRequestNotifications = { openNotificationSettings(context) },
+                onRequestBattery = { openBatteryOptimizationSettings(context) },
                 onGrantWithRoot = { grantWithRoot(context) },
             )
 
@@ -169,11 +177,15 @@ private fun ScreenVigilApp(resumeTick: Int) {
                 prefs = prefs,
                 rootAvailable = permissions.rootAvailable,
                 proximityAvailable = live.proximityAvailable,
+                usageAccess = permissions.usageAccess,
+                overlayAllowed = permissions.overlayAllowed,
                 haStatus = live.haStatus,
                 onTestHa = {
                     haTestAwaitedSince = System.currentTimeMillis()
                     KioskSensorService.command(context, KioskSensorService.ACTION_HA_TEST)
                 },
+                onGrantUsageAccess = { openUsageAccessSettings(context) },
+                onGrantOverlay = { openOverlaySettings(context) },
                 onExport = {
                     copyToClipboard(context, prefs.exportJson())
                     Toast.makeText(context, R.string.diag_copied, Toast.LENGTH_SHORT).show()
@@ -225,10 +237,31 @@ private fun openNotificationSettings(context: Context) {
     }
 }
 
+private fun openBatteryOptimizationSettings(context: Context) {
+    runCatching { context.startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)) }
+}
+
+private fun openUsageAccessSettings(context: Context) {
+    runCatching { context.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)) }
+}
+
+private fun openOverlaySettings(context: Context) {
+    runCatching {
+        context.startActivity(
+            Intent(
+                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                "package:${context.packageName}".toUri(),
+            ),
+        )
+    }
+}
+
 private fun grantWithRoot(context: Context) {
     Thread {
         val pkg = context.packageName
         RootShell.grantWriteSettings(pkg)
+        RootShell.grantUsageStats(pkg)
+        RootShell.exemptFromDoze(pkg)
         RootShell.grantPermission(pkg, Manifest.permission.CAMERA)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             RootShell.grantPermission(pkg, Manifest.permission.POST_NOTIFICATIONS)

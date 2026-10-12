@@ -1,9 +1,11 @@
 package com.vasmarfas.screenvigil
 
 import com.vasmarfas.screenvigil.camera.CameraController
+import com.vasmarfas.screenvigil.kiosk.KioskKeeper
 import com.vasmarfas.screenvigil.motion.MotionDetector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 
 
 object ScreenVigilState {
@@ -40,6 +42,10 @@ object ScreenVigilState {
         val haStatus: String = "",
         val haStatusAt: Long = 0L,
         val rootAvailable: Boolean = false,
+        val kioskState: KioskKeeper.State = KioskKeeper.State.OFF,
+        val kioskLaunches: Int = 0,
+        val kioskLastLaunchAt: Long = 0L,
+        val powerOffReason: String = "",
     )
 
     class PreviewFrame(val width: Int, val height: Int, val pixels: IntArray, val stamp: Long)
@@ -54,7 +60,7 @@ object ScreenVigilState {
     var uiVisible: Boolean = false
 
     fun update(block: (Live) -> Live) {
-        _live.value = block(_live.value)
+        _live.update(block)
     }
 
     fun publishPreview(frame: PreviewFrame?) {

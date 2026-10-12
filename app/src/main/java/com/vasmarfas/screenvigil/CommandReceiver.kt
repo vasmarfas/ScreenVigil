@@ -43,6 +43,16 @@ class CommandReceiver : BroadcastReceiver() {
                 reply("ok")
             }
 
+            "kiosk_show" -> {
+                KioskSensorService.command(context, KioskSensorService.ACTION_KIOSK_SHOW)
+                reply("ok")
+            }
+
+            "kiosk_restart" -> {
+                KioskSensorService.command(context, KioskSensorService.ACTION_KIOSK_RESTART)
+                reply("ok")
+            }
+
             "status" -> reply(statusJson())
 
             "export" -> reply(prefs.exportJson())
@@ -112,6 +122,9 @@ class CommandReceiver : BroadcastReceiver() {
             put("quiet_active", live.quietActive)
             put("root_available", live.rootAvailable)
             put("ha_status", live.haStatus)
+            put("kiosk_state", live.kioskState.name.lowercase())
+            put("kiosk_launches", live.kioskLaunches)
+            put("last_power_off", live.powerOffReason)
             put(
                 "uptime_sec",
                 if (live.startedElapsed > 0) {

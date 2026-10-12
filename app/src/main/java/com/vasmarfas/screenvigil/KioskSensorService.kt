@@ -14,6 +14,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.os.PowerManager
 import android.os.SystemClock
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -21,7 +22,10 @@ import com.vasmarfas.screenvigil.brightness.BrightnessController
 import com.vasmarfas.screenvigil.camera.CameraController
 import com.vasmarfas.screenvigil.camera.FrameProcessor
 import com.vasmarfas.screenvigil.diag.Diag
+import com.vasmarfas.screenvigil.diag.PowerReasons
 import com.vasmarfas.screenvigil.ha.HaPublisher
+import com.vasmarfas.screenvigil.kiosk.ForegroundWatcher
+import com.vasmarfas.screenvigil.kiosk.KioskKeeper
 import com.vasmarfas.screenvigil.motion.MotionDetector
 import com.vasmarfas.screenvigil.power.ProximityWatcher
 import com.vasmarfas.screenvigil.power.ScreenWaker
@@ -40,6 +44,7 @@ class KioskSensorService : Service(), CameraController.Callbacks {
     private lateinit var waker: ScreenWaker
     private lateinit var camera: CameraController
     private lateinit var proximity: ProximityWatcher
+    private lateinit var kiosk: KioskKeeper
     private val processor = FrameProcessor()
     private val motion = MotionDetector()
     private val ha by lazy { HaPublisher(this) }
@@ -63,6 +68,7 @@ class KioskSensorService : Service(), CameraController.Callbacks {
             val on = intent.action == Intent.ACTION_SCREEN_ON
             ScreenVigilState.update { it.copy(screenOn = on) }
             Diag.event(getString(if (on) R.string.ev_screen_on else R.string.ev_screen_off))
+            if (!on) kiosk.onScreenOff()
         }
     }
 
@@ -73,6 +79,7 @@ class KioskSensorService : Service(), CameraController.Callbacks {
         waker = ScreenWaker(this)
         camera = CameraController(this, this, prefs.current)
         proximity = ProximityWatcher(this) { onProximityNear() }
+        kiosk = KioskKeeper(this, prefs)
         Diag.attach(this)
         startedAt = System.currentTimeMillis()
         startedElapsed = SystemClock.elapsedRealtime()
@@ -101,13 +108,16 @@ class KioskSensorService : Service(), CameraController.Callbacks {
         scope.launch(Dispatchers.Default) {
             val cfg = prefs.current
             if (cfg.rootEnabled && cfg.rootAutoGrant) autoGrantWithRoot()
-            ScreenVigilState.update { it.copy(rootAvailable = RootShell.isAvailable()) }
+            val root = RootShell.isAvailable()
+            ScreenVigilState.update { it.copy(rootAvailable = root) }
+            if (cfg.rootEnabled && root) logPowerReasons()
         }
 
         applySystemSettings(prefs.current)
         applyProximity(prefs.current)
         observeConfig()
         camera.start()
+        kiosk.start()
         mainHandler.postDelayed(houseKeeping, HOUSEKEEPING_PERIOD_MS)
         Diag.event(getString(R.string.ev_service_started))
     }
@@ -141,6 +151,10 @@ class KioskSensorService : Service(), CameraController.Callbacks {
                 ha.publish(ScreenVigilState.live.value, prefs.current)
                 Diag.event(getString(R.string.ev_ha_test))
             }
+
+            ACTION_KIOSK_SHOW -> kiosk.show()
+
+            ACTION_KIOSK_RESTART -> kiosk.restart()
         }
         return START_STICKY
     }
@@ -151,6 +165,7 @@ class KioskSensorService : Service(), CameraController.Callbacks {
         runCatching { unregisterReceiver(screenReceiver) }
         proximity.stop()
         camera.release()
+        kiosk.release()
         ha.release()
         waker.releaseWakeLock()
         if (explicitStop) waker.restoreScreenOffTimeout(prefs.current)
@@ -405,7 +420,19 @@ class KioskSensorService : Service(), CameraController.Callbacks {
         if (checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             granted = RootShell.grantPermission(pkg, android.Manifest.permission.CAMERA) || granted
         }
+        if (!ForegroundWatcher(this).hasAccess()) {
+            granted = RootShell.grantUsageStats(pkg) || granted
+        }
+        if (!getSystemService(PowerManager::class.java).isIgnoringBatteryOptimizations(pkg)) {
+            granted = RootShell.exemptFromDoze(pkg) || granted
+        }
         if (granted) Diag.event(getString(R.string.ev_root_granted))
+    }
+
+    private fun logPowerReasons() {
+        val reasons = PowerReasons.parse(RootShell.kernelLog()) ?: return
+        ScreenVigilState.update { it.copy(powerOffReason = reasons.powerOff) }
+        Diag.event(getString(R.string.ev_power_reason, reasons.powerOff, reasons.powerOn))
     }
 
     private fun obtainPreviewBuffer(size: Int): IntArray {
@@ -520,6 +547,8 @@ class KioskSensorService : Service(), CameraController.Callbacks {
         const val ACTION_SCREEN_OFF = "com.vasmarfas.screenvigil.action.SCREEN_OFF"
         const val ACTION_RESTART_CAMERA = "com.vasmarfas.screenvigil.action.RESTART_CAMERA"
         const val ACTION_HA_TEST = "com.vasmarfas.screenvigil.action.HA_TEST"
+        const val ACTION_KIOSK_SHOW = "com.vasmarfas.screenvigil.action.KIOSK_SHOW"
+        const val ACTION_KIOSK_RESTART = "com.vasmarfas.screenvigil.action.KIOSK_RESTART"
 
         fun start(context: Context) {
             val intent = Intent(context, KioskSensorService::class.java)

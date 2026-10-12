@@ -36,6 +36,8 @@
     <string name="perm_write_settings_why">Needed to set the screen brightness and the screen-off timeout. Android grants this on a separate settings screen, not with a normal permission dialog.</string>
     <string name="perm_notifications">Notifications</string>
     <string name="perm_notifications_why">Android keeps a background service alive only while it shows a notification.</string>
+    <string name="perm_battery">No battery optimization</string>
+    <string name="perm_battery_why">After half an hour with the screen off Android cuts the network for background apps (Doze), even on a tablet powered from the mains. Without this exemption values stop reaching Home Assistant at night and the app on the screen comes back after a crash only with a delay. The button opens the system list: switch it to all apps, pick ScreenVigil and turn optimization off.</string>
     <string name="perm_granted">granted</string>
     <string name="perm_missing">missing</string>
     <string name="perm_grant">Grant</string>
@@ -76,6 +78,10 @@
     <string name="ov_quiet_active">Quiet hours active now</string>
     <string name="ov_never">never</string>
     <string name="ov_ha_status">Home Assistant</string>
+    <string name="ov_power_off">Previous power-off</string>
+    <string name="ov_kiosk">App on the screen</string>
+    <string name="ov_kiosk_launches">Times brought back</string>
+    <string name="ov_kiosk_last">Last brought back</string>
     <string name="ov_preview">Camera view (debug)</string>
     <string name="ov_preview_hint">Grayscale picture from the camera; pixels that changed since the previous frame are red. Drawn in memory only, never saved.</string>
     <string name="ov_wake_now">Wake the screen</string>
@@ -88,8 +94,29 @@
     <string name="cam_error">error</string>
     <string name="cam_restarting">restarting</string>
 
+    <!-- kiosk states -->
+    <string name="kiosk_state_no_app">app not chosen</string>
+    <string name="kiosk_state_no_access">no usage access</string>
+    <string name="kiosk_state_in_front">on the screen</string>
+    <string name="kiosk_state_away">another app is open</string>
+    <string name="kiosk_state_waiting">waiting for the network and the server</string>
+    <string name="kiosk_state_not_responding">not responding</string>
+
+    <!-- kiosk reasons -->
+    <string name="kiosk_reason_start">service start</string>
+    <string name="kiosk_reason_not_running">not running</string>
+    <string name="kiosk_reason_restarted">its process restarted</string>
+    <string name="kiosk_reason_home">home screen</string>
+    <string name="kiosk_reason_other_app">another app stayed open</string>
+    <string name="kiosk_reason_screen_off">screen off</string>
+    <string name="kiosk_reason_not_responding">not responding</string>
+    <string name="kiosk_reason_crashed">crash dialog</string>
+    <string name="kiosk_reason_scheduled">scheduled restart</string>
+    <string name="kiosk_reason_command">command</string>
+
     <!-- settings: sections -->
     <string name="sec_features">Main switches</string>
+    <string name="sec_kiosk">App on the screen</string>
     <string name="sec_brightness">Brightness</string>
     <string name="sec_motion">When to react to movement</string>
     <string name="sec_wake">Waking the screen</string>
@@ -180,6 +207,24 @@
     <string name="set_ha_privacy">Only numbers are sent: room light, screen brightness, movement, screen state. The picture itself never leaves the tablet.</string>
     <string name="set_ha_entities">Creates sensor.%1$s_luma, sensor.%1$s_brightness, binary_sensor.%1$s_motion, binary_sensor.%1$s_screen, sensor.%1$s_status.</string>
 
+    <string name="set_kiosk">Keep an app on the screen</string>
+    <string name="set_kiosk_hint">Opens it after a reboot and brings it back after a crash, after the Home button, or when another app is left open.</string>
+    <string name="set_kiosk_app">App</string>
+    <string name="set_kiosk_app_none">not chosen</string>
+    <string name="set_kiosk_choose">Choose</string>
+    <string name="set_kiosk_pick_title">Which app to keep on the screen</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="set_kiosk_no_access">No usage access: ScreenVigil cannot see which app is on the screen, so it only reopens the app after a reboot or when its process dies.</string>
+    <string name="set_kiosk_grant_access">Grant usage access</string>
+    <string name="set_kiosk_overlay">Android 10 and newer let an app open other apps from the background only with “Display over other apps” allowed, or through root.</string>
+    <string name="set_kiosk_grant_overlay">Allow</string>
+    <string name="set_kiosk_return">Bring it back when another app is open for</string>
+    <string name="set_kiosk_return_hint">From the home screen it comes back after 10 s, and the moment the screen goes dark. While ScreenVigil itself is open, the app comes back only when the screen goes dark.</string>
+    <string name="set_kiosk_restart">Restart it every</string>
+    <string name="set_kiosk_restart_hint">Only while the screen is off, and only with root. A web dashboard piles up memory over days; a restart clears it. The page then loads when the screen next turns on, about 12 s on the TB-X103F. 0 means never.</string>
+    <string name="set_kiosk_root_hint">With root ScreenVigil also restarts the app when it hangs (“not responding” for 20 s) or sits behind a crash dialog.</string>
+    <string name="set_kiosk_wait_hint">After a reboot or a crash the app is opened only once the network is up and, if the Home Assistant address below is filled in, Home Assistant answers, but no longer than 2 min. Started before the server is reachable, the Home Assistant app shows a connection error and stays on it.</string>
+
     <string name="set_boot">Start automatically after a reboot</string>
     <string name="set_cmd_token">Password for remote commands</string>
     <string name="set_cmd_token_hint">Leave empty to allow adb commands without a password.</string>
@@ -195,6 +240,7 @@
     <string name="unit_minutes"> min</string>
     <string name="unit_ms"> ms</string>
     <string name="unit_percent"> %%</string>
+    <string name="unit_hours"> h</string>
     <string name="unit_of_255">%1$d of 255</string>
 
     <!-- curve -->
@@ -263,6 +309,15 @@
     <string name="ev_root_granted">permissions granted through root</string>
     <string name="ev_boot">autostart after %1$s</string>
     <string name="ev_proximity_missing">proximity sensor requested but this device has none</string>
+    <string name="ev_power_reason">previous power-off: %1$s; power-on: %2$s</string>
+    <string name="ev_kiosk_launch">kiosk: opened %1$s (%2$s)</string>
+    <string name="ev_kiosk_launch_failed">kiosk: could not open %1$s</string>
+    <string name="ev_kiosk_restart">kiosk: restarting %1$s (%2$s)</string>
+    <string name="ev_kiosk_wait">kiosk: waiting for the network and the server before opening %1$s</string>
+    <string name="ev_kiosk_wait_over">kiosk: no answer for %1$d s, opening anyway</string>
+    <string name="ev_kiosk_needs_root">kiosk: %1$s needs a restart, but root is off</string>
+    <string name="ev_kiosk_no_access">kiosk: no usage access, cannot see which app is on the screen</string>
+    <string name="ev_kiosk_backoff">kiosk: %1$s keeps closing, next try in %2$d min</string>
     <string name="ha_result_ok">Home Assistant accepted the values</string>
     <string name="ha_result_fail">Home Assistant refused: %1$s</string>
     <string name="ha_status_label">Last send</string>

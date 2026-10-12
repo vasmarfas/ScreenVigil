@@ -215,7 +215,14 @@ class CameraController(
         }
         params.setRecordingHint(false)
         cam.parameters = params
-        val fpsRange = IntArray(2).also { runCatching { params.getPreviewFpsRange(it) } }
+        params.supportedPreviewFrameRates?.minOrNull()?.let { rate ->
+            runCatching {
+                val fixed = cam.parameters
+                fixed.previewFrameRate = rate
+                cam.parameters = fixed
+            }
+        }
+        val fpsRange = IntArray(2).also { runCatching { cam.parameters.getPreviewFpsRange(it) } }
         callbacks.onEvent(
             context.getString(
                 R.string.ev_camera_supports,

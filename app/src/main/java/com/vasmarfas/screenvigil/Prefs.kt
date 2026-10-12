@@ -54,6 +54,10 @@ data class Config(
     val haToken: String = "",
     val haPrefix: String = "screenvigil",
     val haIntervalSec: Int = 30,
+    val kioskEnabled: Boolean = false,
+    val kioskPackage: String = "",
+    val kioskReturnSec: Int = 120,
+    val kioskRestartHours: Int = 0,
     val startOnBoot: Boolean = true,
     val commandToken: String = "",
     val diagFileLog: Boolean = false,
@@ -151,6 +155,10 @@ class Prefs private constructor(context: Context) {
         o.put(KEY_HA_URL, c.haUrl)
         o.put(KEY_HA_PREFIX, c.haPrefix)
         o.put(KEY_HA_INTERVAL, c.haIntervalSec)
+        o.put(KEY_KIOSK, c.kioskEnabled)
+        o.put(KEY_KIOSK_PACKAGE, c.kioskPackage)
+        o.put(KEY_KIOSK_RETURN, c.kioskReturnSec)
+        o.put(KEY_KIOSK_RESTART, c.kioskRestartHours)
         o.put(KEY_BOOT, c.startOnBoot)
         o.put(KEY_CMD_TOKEN, c.commandToken)
         o.put(KEY_DIAG_FILE, c.diagFileLog)
@@ -168,7 +176,7 @@ class Prefs private constructor(context: Context) {
                 KEY_AUTO_BRIGHTNESS, KEY_MOTION, KEY_CURVE_ENABLED, KEY_MANAGE_TIMEOUT,
                 KEY_KEEP_AWAKE, KEY_QUIET_ENABLED, KEY_QUIET_NO_WAKE, KEY_ROOT_ENABLED,
                 KEY_ROOT_FALLBACK, KEY_ROOT_FORCE_OFF, KEY_ROOT_AUTO_GRANT, KEY_HA_ENABLED,
-                KEY_BOOT, KEY_DIAG_FILE, KEY_AE_LOCK, KEY_WAKE_ZONE, KEY_PROXIMITY ->
+                KEY_BOOT, KEY_DIAG_FILE, KEY_AE_LOCK, KEY_WAKE_ZONE, KEY_PROXIMITY, KEY_KIOSK ->
                     raw.toBooleanStrictOrNull()?.let { editor.putBoolean(key, it); true } ?: false
 
                 KEY_ALPHA, KEY_MOTION_RATIO, KEY_LIGHT_CHANGE_RATIO, KEY_WAKE_RATIO,
@@ -178,6 +186,13 @@ class Prefs private constructor(context: Context) {
                 KEY_CURVE, KEY_HA_URL, KEY_HA_TOKEN, KEY_HA_PREFIX, KEY_CMD_TOKEN -> {
                     editor.putString(key, raw); true
                 }
+
+                KEY_KIOSK_PACKAGE ->
+                    if (raw.isEmpty() || isPackageName(raw)) {
+                        editor.putString(key, raw); true
+                    } else {
+                        false
+                    }
 
                 else -> raw.toIntOrNull()?.let { editor.putInt(key, it); true } ?: false
             }
@@ -235,6 +250,10 @@ class Prefs private constructor(context: Context) {
         haToken = sp.getString(KEY_HA_TOKEN, "").orEmpty(),
         haPrefix = sp.getString(KEY_HA_PREFIX, "screenvigil").orEmpty().ifBlank { "screenvigil" },
         haIntervalSec = sp.getInt(KEY_HA_INTERVAL, 30),
+        kioskEnabled = sp.getBoolean(KEY_KIOSK, false),
+        kioskPackage = sp.getString(KEY_KIOSK_PACKAGE, "").orEmpty(),
+        kioskReturnSec = sp.getInt(KEY_KIOSK_RETURN, 120),
+        kioskRestartHours = sp.getInt(KEY_KIOSK_RESTART, 0),
         startOnBoot = sp.getBoolean(KEY_BOOT, true),
         commandToken = sp.getString(KEY_CMD_TOKEN, "").orEmpty(),
         diagFileLog = sp.getBoolean(KEY_DIAG_FILE, false),
@@ -288,6 +307,10 @@ class Prefs private constructor(context: Context) {
         const val KEY_HA_TOKEN = "ha_token"
         const val KEY_HA_PREFIX = "ha_prefix"
         const val KEY_HA_INTERVAL = "ha_interval_sec"
+        const val KEY_KIOSK = "kiosk_enabled"
+        const val KEY_KIOSK_PACKAGE = "kiosk_package"
+        const val KEY_KIOSK_RETURN = "kiosk_return_sec"
+        const val KEY_KIOSK_RESTART = "kiosk_restart_hours"
         const val KEY_BOOT = "start_on_boot"
         const val KEY_CMD_TOKEN = "command_token"
         const val KEY_DIAG_FILE = "diag_file_log"
@@ -303,6 +326,10 @@ class Prefs private constructor(context: Context) {
             instance ?: synchronized(this) {
                 instance ?: Prefs(context).also { instance = it }
             }
+
+        private val PACKAGE_NAME = Regex("[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z0-9_]+)+")
+
+        fun isPackageName(value: String): Boolean = PACKAGE_NAME.matches(value)
 
         fun encodeCurve(points: List<CurvePoint>): String =
             points.joinToString(",") { "${it.luma}:${it.brightness}" }

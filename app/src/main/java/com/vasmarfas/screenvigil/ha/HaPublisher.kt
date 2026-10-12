@@ -73,6 +73,9 @@ class HaPublisher(private val context: Context) {
                     put("wake_count", live.wakeCount)
                     put("diff_percent", live.diffPercent)
                     put("quiet_hours", live.quietActive)
+                    put("kiosk_state", live.kioskState.name.lowercase())
+                    put("kiosk_launches", live.kioskLaunches)
+                    if (live.powerOffReason.isNotEmpty()) put("last_power_off", live.powerOffReason)
                     put(
                         "uptime_sec",
                         if (live.startedElapsed > 0) {

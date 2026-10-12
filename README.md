@@ -21,7 +21,7 @@ The camera stream never leaves `onPreviewFrame`. Frames aren't stored, encoded, 
 - `CAMERA` and `WRITE_SETTINGS`
 - Root is optional and only unlocks extras listed below
 
-Developed against a Lenovo TB-X103F (MT8163, 1 GB RAM, Android 6.0.1) running 24/7 as a Home Assistant panel.
+Developed against a Lenovo TB-X103F (Snapdragon 210 / MSM8909, 1 GB RAM, Android 6.0.1) running 24/7 as a Home Assistant panel.
 
 ## Install
 
@@ -96,6 +96,29 @@ Entities created through the REST API are not registered in the entity registry 
 - If your kiosk app manages brightness itself (Fully Kiosk does, under Device Management), turn that off. A window-level `screenBrightness` overrides the system value ScreenVigil writes. Check with `adb shell dumpsys power | grep mScreenBrightnessOverrideFromWindowManager` — it should print `-1`. The Home Assistant companion app doesn't set it.
 - The service starts on `BOOT_COMPLETED`. Some Chinese and Lenovo firmwares need the app added to an autostart whitelist; reboot and check whether the notification comes back.
 - Screens can't be turned off through a public API, so ScreenVigil writes `SCREEN_OFF_TIMEOUT` (30 s by default) and lets the system do it. The original value is restored when you stop the service.
+- If Android thinks the tablet runs on battery (it does when the battery was replaced by a power supply), Doze kicks in after half an hour with the screen off and background apps lose the network. Exempt ScreenVigil from battery optimization — the row is on the Now tab.
+## App on the screen
+
+ScreenVigil can keep a chosen app, usually Home Assistant, on the screen: open it after boot, bring it back after a crash, after the Home button, or when something else was opened and left. Switch it on under Settings → App on the screen.
+
+When the app is brought back:
+
+- its process died or restarted — at once;
+- the home screen is showing — after 10 s, enough to open a different app;
+- another app is open — after `kiosk_return_sec` (2 min by default), or as soon as the screen goes dark;
+- ScreenVigil itself is open — only once the screen goes dark.
+
+Seeing which app is on the screen needs usage access (the button in that section, or "Grant everything with root"). Without it only the boot launch and the restart after the process dies are left. On Android 10 and newer an app can open another one from the background only with "Display over other apps" allowed, or through root.
+
+After boot and after a crash the app is opened only once there is a network and, if the Home Assistant address is filled in, `GET /api/` answers, but no longer than 2 minutes. This matters: the Home Assistant app 2026.x started before the server is reachable shows "Unable to connect to Home Assistant" and never retries by itself; the error stays until someone taps Refresh. On the TB-X103F Wi-Fi connects 6–12 s after `BOOT_COMPLETED`, and the server may take minutes to come back after a power cut.
+
+With root you also get:
+
+- a restart of a hung app: "not responding" for more than 20 s means `am force-stop` and a fresh start;
+- the same for an app stuck behind a "has stopped" dialog;
+- a scheduled restart every `kiosk_restart_hours` hours, only while the screen is off. A web dashboard collects memory over days of uptime, and on Android 6 the Home Assistant page renders inside the app process, so a renderer crash takes the whole app down. The cost: while the screen is off Android does not create the WebView of a freshly started app, so the page loads when the screen next turns on — about 12 s on the TB-X103F. The same applies to a restart after a crash at night.
+
+If the app closes five times within ten minutes, the next attempt waits five minutes. Every launch and restart is in the History tab log with its reason, and goes to Home Assistant as the `kiosk_state` and `kiosk_launches` attributes of `sensor.<prefix>_status`.
 
 ## Remote control
 
@@ -106,7 +129,7 @@ adb shell am broadcast -a com.vasmarfas.screenvigil.COMMAND --es cmd status
 adb shell am broadcast -a com.vasmarfas.screenvigil.COMMAND --es cmd set --es key wake_motion_ratio --es value 0.25
 ```
 
-`start`, `stop`, `status`, `wake`, `screen_off`, `restart_camera`, `set`, `export`, `import`, `reset`, `csv`. `status` returns JSON with everything the app currently sees. Set a password in the settings to require `--es token <value>` on every command.
+`start`, `stop`, `status`, `wake`, `screen_off`, `restart_camera`, `kiosk_show`, `kiosk_restart`, `set`, `export`, `import`, `reset`, `csv`. `kiosk_show` brings the chosen app to the front, `kiosk_restart` restarts it (root). `status` returns JSON with everything the app currently sees. Set a password in the settings to require `--es token <value>` on every command.
 
 Android won't deliver broadcasts to an app that has never been launched or was force-stopped, so open it once after installing.
 
@@ -115,8 +138,10 @@ Android won't deliver broadcasts to an app that has never been launched or was f
 All optional, all off by default:
 
 - write system settings through `su` when `WRITE_SETTINGS` was never granted
-- grant `CAMERA` and `WRITE_SETTINGS` to itself on start
+- grant itself `CAMERA`, `WRITE_SETTINGS`, usage access and a Doze exemption on start
 - turn the screen off after N seconds of inactivity instead of waiting for the system timeout, useful when another app holds the screen awake
+- restart the app kept on the screen when it hangs, and on a schedule (see App on the screen)
+- record why the device powered off last time, read from the PMIC registers, in the log, on the Now tab and as the `last_power_off` attribute in Home Assistant. `UVLO (Under Voltage Lock Out)` means the supply sagged, `PS_HOLD` a normal shutdown or reboot. On a tablet without a battery this answers why it switched itself off
 
 ## Settings
 
@@ -151,6 +176,9 @@ Keys below are what `cmd set` and the exported JSON use.
 | `quiet_enabled`, `quiet_start_min`, `quiet_end_min`, `quiet_brightness_max`, `quiet_no_wake` | false, 1380, 420, 40, false | quiet hours, minutes from midnight |
 | `root_enabled`, `root_settings_fallback`, `root_force_screen_off`, `root_force_screen_off_delay_ms`, `root_auto_grant` | false, true, false, 30000, false | root extras |
 | `ha_enabled`, `ha_url`, `ha_token`, `ha_prefix`, `ha_interval_sec` | false, "", "", screenvigil, 30 | Home Assistant |
+| `kiosk_enabled`, `kiosk_package` | false, "" | keep an app on the screen, and which one |
+| `kiosk_return_sec` | 120 | how long another app may stay on top before the kept app comes back |
+| `kiosk_restart_hours` | 0 | scheduled restart while the screen is off, 0 = off, needs root |
 | `start_on_boot` | true | autostart after reboot |
 | `command_token` | "" | password for broadcast commands |
 | `diag_file_log`, `diag_history_min` | false, 60 | CSV logging and chart history depth |
@@ -161,7 +189,7 @@ Changes apply immediately. Switching camera, exposure lock or exposure compensat
 
 Camera1 (`android.hardware.Camera`), not CameraX or Camera2. On the target hardware the Camera2 HAL reports `LEGACY`, so Camera2 would be a wrapper around the same code path with more moving parts. The camera opens once, binds preview to an off-screen `SurfaceTexture`, and delivers frames through `setPreviewCallbackWithBuffer` with three reused buffers — no per-frame allocation. Preview size is the smallest the device offers (160×120 here).
 
-One pass over the luma plane produces the average, the changed-pixel count and, when the wake zone is on, the same count restricted to a central rectangle. Frames above 65 536 pixels are subsampled by stride so switching to the back camera can't blow up CPU usage. Measured cost on MT8163: 1–2 % for the app process, plus 8–10 % for `mm-qcamera-daemon`, which is the price of holding a preview open and can't be reduced from the app — the HAL offers no fixed low-fps range.
+One pass over the luma plane produces the average, the changed-pixel count and, when the wake zone is on, the same count restricted to a central rectangle. Frames above 65 536 pixels are subsampled by stride so switching to the back camera can't blow up CPU usage. Measured cost on MSM8909: 1–2 % for the app process, plus about 9 % for `mm-qcamera-daemon`, which is the price of holding a preview open. The HAL offers no fixed low-fps range, but it honours the legacy `preview-frame-rate` parameter: at its minimum (8) the sensor delivers about 11 frames per second instead of 15–17, and the camera daemon drops from 12 % to 9 %.
 
 Waking uses `SCREEN_BRIGHT_WAKE_LOCK | ACQUIRE_CAUSES_WAKEUP | ON_AFTER_RELEASE` with a timeout. Deprecated since API 17, and still the only way to wake a screen without root or device-owner privileges.
 

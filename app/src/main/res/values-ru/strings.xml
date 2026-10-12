@@ -36,6 +36,8 @@
     <string name="perm_write_settings_why">Нужно, чтобы задавать яркость экрана и время до его выключения. Android выдаёт это на отдельном экране настроек, а не обычным диалогом.</string>
     <string name="perm_notifications">Уведомления</string>
     <string name="perm_notifications_why">Android держит фоновый сервис живым только пока тот показывает уведомление.</string>
+    <string name="perm_battery">Без оптимизации батареи</string>
+    <string name="perm_battery_why">Через полчаса с погашенным экраном Android отключает фоновым приложениям сеть (Doze), даже если планшет питается от сети. Без этого исключения значения ночью перестают доходить до Home Assistant, а приложение на экране после вылета возвращается с задержкой. Кнопка открывает системный список: переключите его на все приложения, выберите ScreenVigil и отключите для него оптимизацию.</string>
     <string name="perm_granted">выдано</string>
     <string name="perm_missing">не выдано</string>
     <string name="perm_grant">Выдать</string>
@@ -76,6 +78,10 @@
     <string name="ov_quiet_active">Сейчас тихие часы</string>
     <string name="ov_never">не было</string>
     <string name="ov_ha_status">Home Assistant</string>
+    <string name="ov_power_off">Прошлое выключение</string>
+    <string name="ov_kiosk">Приложение на экране</string>
+    <string name="ov_kiosk_launches">Сколько раз возвращено</string>
+    <string name="ov_kiosk_last">Последний раз</string>
     <string name="ov_preview">Вид с камеры (отладка)</string>
     <string name="ov_preview_hint">Картинка с камеры в оттенках серого; пиксели, изменившиеся с прошлого кадра, покрашены красным. Строится только в памяти и никогда не сохраняется.</string>
     <string name="ov_wake_now">Разбудить экран</string>
@@ -88,8 +94,29 @@
     <string name="cam_error">ошибка</string>
     <string name="cam_restarting">перезапускается</string>
 
+    <!-- kiosk states -->
+    <string name="kiosk_state_no_app">приложение не выбрано</string>
+    <string name="kiosk_state_no_access">нет доступа к истории использования</string>
+    <string name="kiosk_state_in_front">на экране</string>
+    <string name="kiosk_state_away">открыто другое приложение</string>
+    <string name="kiosk_state_waiting">ждёт сеть и сервер</string>
+    <string name="kiosk_state_not_responding">не отвечает</string>
+
+    <!-- kiosk reasons -->
+    <string name="kiosk_reason_start">запуск сервиса</string>
+    <string name="kiosk_reason_not_running">не запущено</string>
+    <string name="kiosk_reason_restarted">процесс перезапустился</string>
+    <string name="kiosk_reason_home">рабочий стол</string>
+    <string name="kiosk_reason_other_app">осталось открыто другое приложение</string>
+    <string name="kiosk_reason_screen_off">экран погас</string>
+    <string name="kiosk_reason_not_responding">не отвечает</string>
+    <string name="kiosk_reason_crashed">окно об ошибке</string>
+    <string name="kiosk_reason_scheduled">плановый перезапуск</string>
+    <string name="kiosk_reason_command">команда</string>
+
     <!-- settings: sections -->
     <string name="sec_features">Главные переключатели</string>
+    <string name="sec_kiosk">Приложение на экране</string>
     <string name="sec_brightness">Яркость</string>
     <string name="sec_motion">Когда реагировать на движение</string>
     <string name="sec_wake">Пробуждение экрана</string>
@@ -180,6 +207,24 @@
     <string name="set_ha_privacy">Отправляются только числа: свет в комнате, яркость экрана, движение, состояние экрана. Сама картинка никогда не покидает планшет.</string>
     <string name="set_ha_entities">Создаёт sensor.%1$s_luma, sensor.%1$s_brightness, binary_sensor.%1$s_motion, binary_sensor.%1$s_screen, sensor.%1$s_status.</string>
 
+    <string name="set_kiosk">Держать приложение на экране</string>
+    <string name="set_kiosk_hint">Открывает его после перезагрузки и возвращает после вылета, после кнопки «Домой» или если открыли другое приложение и оставили.</string>
+    <string name="set_kiosk_app">Приложение</string>
+    <string name="set_kiosk_app_none">не выбрано</string>
+    <string name="set_kiosk_choose">Выбрать</string>
+    <string name="set_kiosk_pick_title">Какое приложение держать на экране</string>
+    <string name="dialog_cancel">Отмена</string>
+    <string name="set_kiosk_no_access">Нет доступа к истории использования: ScreenVigil не видит, какое приложение на экране, и поднимает выбранное только после перезагрузки или гибели его процесса.</string>
+    <string name="set_kiosk_grant_access">Выдать доступ</string>
+    <string name="set_kiosk_overlay">Начиная с Android 10 открыть другое приложение из фона можно только с разрешением «Поверх других окон» или через root.</string>
+    <string name="set_kiosk_grant_overlay">Разрешить</string>
+    <string name="set_kiosk_return">Возвращать, если другое приложение открыто дольше</string>
+    <string name="set_kiosk_return_hint">С рабочего стола оно возвращается через 10 с, а при погасании экрана — сразу. Пока открыт сам ScreenVigil, приложение вернётся только когда погаснет экран.</string>
+    <string name="set_kiosk_restart">Перезапускать каждые</string>
+    <string name="set_kiosk_restart_hint">Только при погашенном экране и только с root. Веб-панель за несколько суток копит память, перезапуск её сбрасывает. Страница после него загружается при следующем включении экрана, на TB-X103F это около 12 с. 0 — не перезапускать.</string>
+    <string name="set_kiosk_root_hint">С root ScreenVigil ещё и перезапускает приложение, когда оно зависло («не отвечает» дольше 20 с) или висит за окном об ошибке.</string>
+    <string name="set_kiosk_wait_hint">После перезагрузки и вылета приложение открывается, только когда поднялась сеть и, если ниже заполнен адрес Home Assistant, сервер отвечает, но не дольше 2 мин. Приложение Home Assistant, запущенное раньше, чем сервер стал доступен, показывает ошибку подключения и само из неё не выходит.</string>
+
     <string name="set_boot">Запускаться автоматически после перезагрузки</string>
     <string name="set_cmd_token">Пароль для команд извне</string>
     <string name="set_cmd_token_hint">Оставьте пустым, чтобы команды через adb работали без пароля.</string>
@@ -195,6 +240,7 @@
     <string name="unit_minutes"> мин</string>
     <string name="unit_ms"> мс</string>
     <string name="unit_percent"> %%</string>
+    <string name="unit_hours"> ч</string>
     <string name="unit_of_255">%1$d из 255</string>
 
     <!-- curve -->
@@ -263,6 +309,15 @@
     <string name="ev_root_granted">разрешения выданы через root</string>
     <string name="ev_boot">автозапуск после %1$s</string>
     <string name="ev_proximity_missing">запрошен датчик приближения, но на этом устройстве его нет</string>
+    <string name="ev_power_reason">прошлое выключение: %1$s; включение: %2$s</string>
+    <string name="ev_kiosk_launch">киоск: открыто %1$s (%2$s)</string>
+    <string name="ev_kiosk_launch_failed">киоск: не удалось открыть %1$s</string>
+    <string name="ev_kiosk_restart">киоск: перезапуск %1$s (%2$s)</string>
+    <string name="ev_kiosk_wait">киоск: жду сеть и сервер, прежде чем открыть %1$s</string>
+    <string name="ev_kiosk_wait_over">киоск: ответа нет %1$d с, открываю без него</string>
+    <string name="ev_kiosk_needs_root">киоск: %1$s нужно перезапустить, но root выключен</string>
+    <string name="ev_kiosk_no_access">киоск: нет доступа к истории использования, не видно, какое приложение на экране</string>
+    <string name="ev_kiosk_backoff">киоск: %1$s закрывается раз за разом, следующая попытка через %2$d мин</string>
     <string name="ha_result_ok">Home Assistant принял значения</string>
     <string name="ha_result_fail">Home Assistant отказал: %1$s</string>
     <string name="ha_status_label">Последняя отправка</string>

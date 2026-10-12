@@ -1,6 +1,6 @@
 # Privacy Policy
 
-**Effective Date:** 2026-08-11
+**Effective Date:** 2026-10-10
 
 **ScreenVigil** ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our Android application (the "App").
 
@@ -17,6 +17,10 @@ The App uses the device's front (or back) camera to estimate room brightness and
 
 Your configuration — brightness thresholds, motion thresholds, schedule, camera selection and, if you choose to fill them in, a Home Assistant server address and access token — is stored in the App's private, on-device preferences. It is not accessible to other apps and is not synced anywhere unless you enable the optional Home Assistant integration described below.
 
+### App on the screen (optional, off by default)
+
+If you turn on "App on the screen" and pick an app to keep in front, the App reads, through Android's usage access that you grant yourself, the package name of the app currently in the foreground, and checks whether the chosen app's process is running. This is used only to bring the chosen app back after a reboot, a crash or the Home button. The package name is kept in memory, is not stored and is not sent anywhere. Before reopening the chosen app the App may send one HTTP request to the Home Assistant address you configured, only to check that the server answers; the request carries no data.
+
 ### Diagnostics log (optional, off by default)
 
 If you turn on the CSV diagnostics log in Settings, the App writes numeric measurements (timestamp, room brightness, screen brightness, percentage of change, movement flag) to a folder inside the App's own storage. This file never leaves the device on its own and is deleted automatically when the App is uninstalled.
@@ -27,7 +31,7 @@ The App does not use Firebase, Google Analytics, Crashlytics, advertising SDKs, 
 
 ### Optional Home Assistant integration
 
-If you switch this on and enter your own Home Assistant server address and a long-lived access token, the App sends plain numeric values to that address over HTTP: room brightness, screen brightness, motion state, screen on/off state, and basic service statistics (frame count, camera restarts, uptime). No images or camera data are ever included. The server you send this to is one you configure yourself — typically a device on your own local network — and its operator (usually you) is the only party that receives this data; we do not.
+If you switch this on and enter your own Home Assistant server address and a long-lived access token, the App sends plain numeric values to that address over HTTP: room brightness, screen brightness, motion state, screen on/off state, and basic service statistics (frame count, camera restarts, uptime, state of the "App on the screen" feature and how many times it brought the app back, and, with root enabled, the reason the device last powered off as reported by its power controller). No images or camera data are ever included. The server you send this to is one you configure yourself — typically a device on your own local network — and its operator (usually you) is the only party that receives this data; we do not.
 
 The source code of the App is available for review on GitHub.
 
@@ -42,6 +46,8 @@ The App requests the following permissions and uses them only for the stated pur
 - **Receive boot completed** — to restart the service automatically after the device reboots, if you enabled that option.
 - **Internet** and **access network state** — used only when you enable the optional Home Assistant integration; otherwise unused.
 - **Foreground service (camera type)** — required by Android to keep the camera open while the screen is off.
+- **Usage access** (`PACKAGE_USAGE_STATS`) — only for "App on the screen", to see which app is in the foreground. Granted by you on a system screen.
+- **Display over other apps** (`SYSTEM_ALERT_WINDOW`) — only for "App on the screen" on Android 10 and newer, where a background service may not open another app without it. The App draws nothing over other apps.
 
 ## 4. Children's Privacy
 

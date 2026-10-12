@@ -35,6 +35,7 @@ import com.vasmarfas.screenvigil.Config
 import com.vasmarfas.screenvigil.R
 import com.vasmarfas.screenvigil.ScreenVigilState
 import com.vasmarfas.screenvigil.camera.CameraController
+import com.vasmarfas.screenvigil.kiosk.KioskKeeper
 import com.vasmarfas.screenvigil.motion.MotionDetector
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
@@ -45,9 +46,12 @@ data class PermissionState(
     val camera: Boolean,
     val writeSettings: Boolean,
     val notifications: Boolean,
+    val batteryUnrestricted: Boolean,
     val rootAvailable: Boolean,
+    val usageAccess: Boolean,
+    val overlayAllowed: Boolean,
 ) {
-    val allGranted: Boolean get() = camera && writeSettings && notifications
+    val allGranted: Boolean get() = camera && writeSettings && notifications && batteryUnrestricted
 }
 
 private val clock = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
@@ -63,6 +67,7 @@ fun OverviewScreen(
     onRequestCamera: () -> Unit,
     onRequestWriteSettings: () -> Unit,
     onRequestNotifications: () -> Unit,
+    onRequestBattery: () -> Unit,
     onGrantWithRoot: () -> Unit,
 ) {
     var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
@@ -124,6 +129,12 @@ fun OverviewScreen(
                     why = stringResource(R.string.perm_notifications_why),
                     granted = permissions.notifications,
                     onGrant = onRequestNotifications,
+                )
+                PermissionRow(
+                    title = stringResource(R.string.perm_battery),
+                    why = stringResource(R.string.perm_battery_why),
+                    granted = permissions.batteryUnrestricted,
+                    onGrant = onRequestBattery,
                 )
                 if (permissions.rootAvailable) {
                     TextButton(onClick = onGrantWithRoot) {
@@ -198,6 +209,25 @@ fun OverviewScreen(
             }
             if (config.haEnabled && live.haStatus.isNotBlank()) {
                 StatRow(stringResource(R.string.ov_ha_status), live.haStatus)
+            }
+            if (live.powerOffReason.isNotEmpty()) {
+                StatRow(stringResource(R.string.ov_power_off), live.powerOffReason)
+            }
+            if (config.kioskEnabled) {
+                StatRow(
+                    stringResource(R.string.ov_kiosk),
+                    kioskStateText(live.kioskState),
+                    highlight = live.kioskState != KioskKeeper.State.IN_FRONT,
+                )
+                StatRow(stringResource(R.string.ov_kiosk_launches), live.kioskLaunches.toString())
+                StatRow(
+                    stringResource(R.string.ov_kiosk_last),
+                    if (live.kioskLastLaunchAt > 0) {
+                        clock.format(Date(live.kioskLastLaunchAt))
+                    } else {
+                        stringResource(R.string.ov_never)
+                    },
+                )
             }
         }
 
@@ -282,6 +312,17 @@ private fun FramePreviewCard() {
         )
         Hint(stringResource(R.string.ov_preview_hint))
     }
+}
+
+@Composable
+private fun kioskStateText(state: KioskKeeper.State): String = when (state) {
+    KioskKeeper.State.OFF -> "—"
+    KioskKeeper.State.NO_APP -> stringResource(R.string.kiosk_state_no_app)
+    KioskKeeper.State.NO_ACCESS -> stringResource(R.string.kiosk_state_no_access)
+    KioskKeeper.State.IN_FRONT -> stringResource(R.string.kiosk_state_in_front)
+    KioskKeeper.State.AWAY -> stringResource(R.string.kiosk_state_away)
+    KioskKeeper.State.WAITING -> stringResource(R.string.kiosk_state_waiting)
+    KioskKeeper.State.NOT_RESPONDING -> stringResource(R.string.kiosk_state_not_responding)
 }
 
 @Composable

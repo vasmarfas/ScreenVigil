@@ -1,5 +1,6 @@
 package com.vasmarfas.screenvigil.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -7,19 +8,35 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vasmarfas.screenvigil.Config
 import com.vasmarfas.screenvigil.Prefs
 import com.vasmarfas.screenvigil.R
+import com.vasmarfas.screenvigil.kiosk.LaunchableApp
+import com.vasmarfas.screenvigil.kiosk.appLabel
+import com.vasmarfas.screenvigil.kiosk.launchableApps
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun SettingsScreen(
@@ -27,15 +44,21 @@ fun SettingsScreen(
     prefs: Prefs,
     rootAvailable: Boolean,
     proximityAvailable: Boolean,
+    usageAccess: Boolean,
+    overlayAllowed: Boolean,
     haStatus: String,
     onTestHa: () -> Unit,
+    onGrantUsageAccess: () -> Unit,
+    onGrantOverlay: () -> Unit,
     onExport: () -> Unit,
     onImport: () -> Unit,
 ) {
     val seconds = stringResource(R.string.unit_seconds)
     val minutes = stringResource(R.string.unit_minutes)
+    val hours = stringResource(R.string.unit_hours)
     val ms = stringResource(R.string.unit_ms)
     val percent = stringResource(R.string.unit_percent)
+    val rootUsable = rootAvailable && config.rootEnabled
 
     Column(
         modifier = Modifier
@@ -54,6 +77,43 @@ fun SettingsScreen(
                 subtitle = stringResource(R.string.set_motion_hint),
                 checked = config.motionEnabled,
             ) { prefs.putBoolean(Prefs.KEY_MOTION, it) }
+        }
+
+        SectionCard(stringResource(R.string.sec_kiosk)) {
+            SwitchRow(
+                label = stringResource(R.string.set_kiosk),
+                subtitle = stringResource(R.string.set_kiosk_hint),
+                checked = config.kioskEnabled,
+            ) { prefs.putBoolean(Prefs.KEY_KIOSK, it) }
+            KioskAppRow(config.kioskPackage) { prefs.putString(Prefs.KEY_KIOSK_PACKAGE, it) }
+            if (config.kioskEnabled && !usageAccess) {
+                Hint(stringResource(R.string.set_kiosk_no_access))
+                TextButton(onClick = onGrantUsageAccess) {
+                    Text(stringResource(R.string.set_kiosk_grant_access))
+                }
+            }
+            if (config.kioskEnabled && !overlayAllowed && !rootUsable) {
+                Hint(stringResource(R.string.set_kiosk_overlay))
+                TextButton(onClick = onGrantOverlay) {
+                    Text(stringResource(R.string.set_kiosk_grant_overlay))
+                }
+            }
+            IntSliderRow(
+                label = stringResource(R.string.set_kiosk_return),
+                value = config.kioskReturnSec,
+                range = 10..600,
+                suffix = seconds,
+                hint = stringResource(R.string.set_kiosk_return_hint),
+            ) { prefs.putInt(Prefs.KEY_KIOSK_RETURN, it) }
+            IntSliderRow(
+                label = stringResource(R.string.set_kiosk_restart),
+                value = config.kioskRestartHours,
+                range = 0..72,
+                suffix = hours,
+                hint = stringResource(R.string.set_kiosk_restart_hint),
+            ) { prefs.putInt(Prefs.KEY_KIOSK_RESTART, it) }
+            if (!rootUsable) Hint(stringResource(R.string.set_kiosk_root_hint))
+            Hint(stringResource(R.string.set_kiosk_wait_hint))
         }
 
         SectionCard(stringResource(R.string.sec_brightness)) {
@@ -274,13 +334,13 @@ fun SettingsScreen(
             SwitchRow(
                 label = stringResource(R.string.set_root_fallback),
                 checked = config.rootSettingsFallback,
-                enabled = rootAvailable && config.rootEnabled,
+                enabled = rootUsable,
             ) { prefs.putBoolean(Prefs.KEY_ROOT_FALLBACK, it) }
             SwitchRow(
                 label = stringResource(R.string.set_root_force_off),
                 subtitle = stringResource(R.string.set_root_force_off_hint),
                 checked = config.rootForceScreenOff,
-                enabled = rootAvailable && config.rootEnabled,
+                enabled = rootUsable,
             ) { prefs.putBoolean(Prefs.KEY_ROOT_FORCE_OFF, it) }
             if (config.rootForceScreenOff) {
                 IntSliderRow(
@@ -293,7 +353,7 @@ fun SettingsScreen(
             SwitchRow(
                 label = stringResource(R.string.set_root_auto_grant),
                 checked = config.rootAutoGrant,
-                enabled = rootAvailable && config.rootEnabled,
+                enabled = rootUsable,
             ) { prefs.putBoolean(Prefs.KEY_ROOT_AUTO_GRANT, it) }
         }
 
@@ -362,6 +422,70 @@ fun SettingsScreen(
 
         Spacer(Modifier.height(24.dp))
     }
+}
+
+@Composable
+private fun KioskAppRow(packageName: String, onPick: (String) -> Unit) {
+    val context = LocalContext.current
+    var picking by remember { mutableStateOf(false) }
+    val label = remember(packageName) { appLabel(context, packageName) }
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(stringResource(R.string.set_kiosk_app), style = MaterialTheme.typography.bodyMedium)
+            Text(
+                text = label ?: stringResource(R.string.set_kiosk_app_none),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        OutlinedButton(onClick = { picking = true }) { Text(stringResource(R.string.set_kiosk_choose)) }
+    }
+    if (picking) {
+        AppPickerDialog(
+            onDismiss = { picking = false },
+            onPick = {
+                picking = false
+                onPick(it)
+            },
+        )
+    }
+}
+
+@Composable
+private fun AppPickerDialog(onDismiss: () -> Unit, onPick: (String) -> Unit) {
+    val context = LocalContext.current
+    val apps by produceState(emptyList<LaunchableApp>()) {
+        value = withContext(Dispatchers.IO) { launchableApps(context) }
+    }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.set_kiosk_pick_title)) },
+        text = {
+            LazyColumn {
+                items(apps, key = { it.packageName }) { app ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onPick(app.packageName) }
+                            .padding(vertical = 8.dp),
+                    ) {
+                        Text(app.label, style = MaterialTheme.typography.bodyLarge)
+                        Text(
+                            text = app.packageName,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.dialog_cancel)) }
+        },
+    )
 }
 
 @Composable

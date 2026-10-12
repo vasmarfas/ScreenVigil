@@ -7,6 +7,7 @@ import java.io.InputStreamReader
 object RootShell {
 
     private const val TAG = "ScreenVigil/Root"
+    private val COMPONENT = Regex("[A-Za-z0-9_.]+/[A-Za-z0-9_.$]+")
 
     @Volatile
     private var available: Boolean? = null
@@ -50,6 +51,24 @@ object RootShell {
 
     fun grantWriteSettings(packageName: String): Boolean =
         exec("appops set $packageName WRITE_SETTINGS allow").ok
+
+    fun grantUsageStats(packageName: String): Boolean =
+        exec("appops set $packageName GET_USAGE_STATS allow").ok
+
+    fun exemptFromDoze(packageName: String): Boolean =
+        exec("dumpsys deviceidle whitelist +$packageName").ok
+
+    fun forceStop(packageName: String): Boolean = exec("am force-stop $packageName").ok
+
+    fun startLauncherActivity(component: String): Boolean {
+        if (!COMPONENT.matches(component)) return false
+        return exec(
+            "am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER " +
+                "-f 0x10200000 -n '$component'",
+        ).let { it.ok && !it.output.contains("Error") }
+    }
+
+    fun kernelLog(): String = exec("dmesg").output
 
     fun screenOff(): Boolean = exec("input keyevent 26").ok
 
