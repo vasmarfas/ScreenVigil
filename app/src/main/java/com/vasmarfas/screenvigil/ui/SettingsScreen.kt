@@ -3,6 +3,7 @@ package com.vasmarfas.screenvigil.ui
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -411,7 +412,7 @@ fun SettingsScreen(
                 range = 5..360,
                 suffix = minutes,
             ) { prefs.putInt(Prefs.KEY_DIAG_HISTORY, it) }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 TextButton(onClick = onExport) { Text(stringResource(R.string.set_export)) }
                 TextButton(onClick = onImport) { Text(stringResource(R.string.set_import)) }
                 TextButton(onClick = { prefs.resetAll() }) {
