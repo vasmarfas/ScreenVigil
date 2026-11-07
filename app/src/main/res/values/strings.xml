@@ -231,6 +231,7 @@
     <string name="set_diag_file">Write a CSV log to the app folder</string>
     <string name="set_diag_history">Keep history for</string>
     <string name="set_reset">Reset everything to defaults</string>
+    <string name="set_chat">Telegram chat</string>
     <string name="set_export">Copy settings</string>
     <string name="set_import">Paste settings</string>
     <string name="set_import_result">Applied: %1$d</string>

@@ -1,5 +1,7 @@
 package com.vasmarfas.screenvigil.ui
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -38,6 +40,8 @@ import com.vasmarfas.screenvigil.kiosk.appLabel
 import com.vasmarfas.screenvigil.kiosk.launchableApps
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+
+private const val CHAT_URL = "https://t.me/vasmarfas_chat"
 
 @Composable
 fun SettingsScreen(
@@ -418,11 +422,20 @@ fun SettingsScreen(
                 TextButton(onClick = { prefs.resetAll() }) {
                     Text(stringResource(R.string.set_reset))
                 }
+                ChatButton()
             }
         }
 
         Spacer(Modifier.height(24.dp))
     }
+}
+
+@Composable
+private fun ChatButton() {
+    val context = LocalContext.current
+    TextButton(onClick = {
+        runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(CHAT_URL))) }
+    }) { Text(stringResource(R.string.set_chat)) }
 }
 
 @Composable

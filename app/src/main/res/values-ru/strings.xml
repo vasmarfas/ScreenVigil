@@ -231,6 +231,7 @@
     <string name="set_diag_file">Писать CSV-лог в папку приложения</string>
     <string name="set_diag_history">Хранить историю</string>
     <string name="set_reset">Сбросить всё к значениям по умолчанию</string>
+    <string name="set_chat">Чат в Telegram</string>
     <string name="set_export">Скопировать настройки</string>
     <string name="set_import">Вставить настройки</string>
     <string name="set_import_result">Применено: %1$d</string>

@@ -2,7 +2,7 @@
 
 Camera-driven auto-brightness and wake-on-approach for Android tablets that have no ambient light sensor.
 
-[Русская версия](README.ru.md)
+[Русская версия](README.ru.md) · [Telegram chat](https://t.me/vasmarfas_chat)
 
 **❤️ Support the project:** if you'd like to support further development, see [`SUPPORT.md`](SUPPORT.md).
 

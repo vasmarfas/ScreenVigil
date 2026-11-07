@@ -2,7 +2,7 @@
 
 Автояркость по камере и включение экрана при подходе — для Android-планшетов без датчика освещённости.
 
-[English version](README.md)
+[English version](README.md) · [Чат в Telegram](https://t.me/vasmarfas_chat)
 
 **❤️ Поддержать проект:** если хотите поддержать дальнейшую разработку, см. [`SUPPORT.md`](SUPPORT.md).
 
